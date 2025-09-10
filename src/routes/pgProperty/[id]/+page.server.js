@@ -17,6 +17,3 @@ export async function load({ params }) {
       );
     }
 }
-
-
-{/* <button class="mt-5 border-[1.5px] border-pg-sky text-pg-sky px-4 py-2 rounded-md w-full">book rooms</button> */}
