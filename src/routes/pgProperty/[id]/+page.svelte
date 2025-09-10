@@ -7,7 +7,7 @@
 
 
 <!-- <h3 class="text-center">{page.params.pgPropertyName}</h3> -->
-<h2 class="mb-2 font-Manrope">pg information</h2>
+<h2 class="mb-5 font-Manrope">pg information</h2>
 
 <div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:ml-3 mb-5">
@@ -53,7 +53,7 @@
   ></iframe>
 </div>
 
-<h2 class="mt-5 mb-2 font-Manrope">rooms types & pricing</h2>
+<h2 class="mt-5 mb-5 font-Manrope">rooms types & pricing</h2>
 
 
 <div class="mt-3 grid grid-cols-2 gap-3 *:border *:border-pg-sky *:h-[170px] *:rounded-xl *:shadow-sm">
@@ -69,7 +69,7 @@
     {/each}
 </div>
 
-<h2 class="mt-5 mb-2 font-Manrope">pg amenities</h2>
+<h2 class="mt-5 mb-5 font-Manrope">pg amenities</h2>
 
 <div class="mt-3 grid grid-cols-2 gap-3 *:border *:border-pg-sky *:h-[60px] *:rounded-xl *:shadow-sm">
     {#each data.pgProperty.pgAmenities as pgAmenities}
@@ -80,7 +80,7 @@
     {/each}
 </div>
 
-<h2 class="mt-5 mb-2 font-Manrope">owner details</h2>
+<h2 class="mt-5 mb-5 font-Manrope">owner details</h2>
 
 <div class="mt-3">
     <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">name</p>
