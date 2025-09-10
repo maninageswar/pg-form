@@ -222,7 +222,7 @@
 
             {@render MyCheckbox({ label: "lift/elevator", value: "liftAvaliability" })}
             {@render MyCheckbox({ label: "power backup", value: "powerBackup" })}
-            {@render MyCheckbox({ label: "common kitchen", value: "commonKitchenAvaliability" })}
+            {@render MyCheckbox({ label: "common kitchen", value: "commonKitchen" })}
             {@render MyCheckbox({ label: "ro water", value: "roWater" })}
 
         </div>

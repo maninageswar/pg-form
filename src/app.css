@@ -1,6 +1,6 @@
 @import url("https://fonts.googleapis.com/css2?family=Source+Code+Pro:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
-
+@import url("https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&display=swap");
 
 @import 'tailwindcss';
 @plugin '@tailwindcss/forms';
@@ -9,7 +9,17 @@
 
 @theme {
     --color-pg-sky: #0ea5e9e6; /* Example: sky-500 with 90% opacity */
+    --font-Manrope: Manrope, sans-serif;
 }
+
+/* 
+class composition in tailwindcss which is nothing but combining multiple utility classes into a single class for reuse.
+use btn-primary class in your html element to apply these styles.
+ */
+.btn-primary {
+  @apply px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600;
+}
+
 
 
 body {
