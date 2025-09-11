@@ -14,7 +14,11 @@ export const actions = {
     }
     formData.delete('pgAmenities');
     formData.append('pgAmenities', JSON.stringify(amenities));
-    console.log("formData2", formData);
+    const selectedState = JSON.parse(formData.get('pgState'));
+    const selectedPgType = JSON.parse(formData.get('pgType'))
+    formData.set('pgState', selectedState.value);
+    formData.set('pgType', selectedPgType.value);
+    console.log("server-formData", formData);
 
     try {
       const record = await pb.collection("pgProperties").create(formData);

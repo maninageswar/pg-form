@@ -5,8 +5,6 @@
     console.log('data',data.pgProperty)
 </script>
 
-
-<!-- <h3 class="text-center">{page.params.pgPropertyName}</h3> -->
 <h2 class="mb-5 font-Manrope">pg information</h2>
 
 <div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
@@ -15,7 +13,6 @@
     <img class="inline-block w-[280px] h-[175px] object-cover snap-start" src="/pgImages/image2.png" alt="">
     <img class="inline-block w-[280px] h-[175px] object-cover snap-start" src="/pgImages/image2.png" alt="">
 </div>
-
 
 <div class="mt-3">
     <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">name</p>
@@ -33,9 +30,9 @@
 </div>
 
 <div class="mt-3 flex items-center justify-between">
-    <div class="basis-[80%]">
+    <div class="basis-[90%]">
         <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">location</p>
-        <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">123 Main Street, Anytown need to add a field in form</p>
+        <p class="text-[#4b819b] text-sm font-normal">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
     </div>
     <img src="/icons/location.svg" alt="Location Icon" />
 </div>

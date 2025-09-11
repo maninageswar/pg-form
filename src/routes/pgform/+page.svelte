@@ -8,6 +8,46 @@
     import Select from 'svelte-select';
 
     let pgType = ['gents', 'ladies', 'co-live'];
+
+    let states = [
+        "Andhra Pradesh",
+        "Arunachal Pradesh",
+        "Assam",
+        "Bihar",
+        "Chhattisgarh",
+        "Goa",
+        "Gujarat",
+        "Haryana",
+        "Himachal Pradesh",
+        "Jharkhand",
+        "Karnataka",
+        "Kerala",
+        "Madhya Pradesh",
+        "Maharashtra",
+        "Manipur",
+        "Meghalaya",
+        "Mizoram",
+        "Nagaland",
+        "Odisha",
+        "Punjab",
+        "Rajasthan",
+        "Sikkim",
+        "Tamil Nadu",
+        "Telangana",
+        "Tripura",
+        "Uttar Pradesh",
+        "Uttarakhand",
+        "West Bengal",
+        "Andaman and Nicobar Islands",
+        "Chandigarh",
+        "Dadra and Nagar Haveli and Daman and Diu",
+        "Delhi",
+        "Jammu and Kashmir",
+        "Ladakh",
+        "Lakshadweep",
+        "Puducherry"
+    ];
+    
     const roomTypes = ['sharing 1', 'sharing 2', 'sharing 3', 'sharing 4', 'sharing 5'];
 
     let noOfFloors = $state();
@@ -125,6 +165,20 @@
 
     {@render Input("pgName", "text", "name")}
 
+    <label for="pgAddress">address</label><span class="text-red-500">*</span>
+    <textarea id="pgAddress" name="pgAddress" rows="3" cols="40" class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky" placeholder="enter address"></textarea>
+
+    {@render Input("pgCity", "text", "city/district/town")}
+
+    <label for="pgState">state</label><span class="text-red-500">*</span>
+    <div class="mt-1 mb-4">
+        <Select items={states} required={true} name="pgState"/>
+    </div>
+
+    {@render Input("pgLandmark", "text", "landmark")}
+
+    {@render Input("pgPincode", "number", "pincode")}
+    
     {@render Input("pgLocation", "url", "location", "please provide the location link")}
 
     {@render Input("pgDepositAmount", "number", "deposite amount")}
