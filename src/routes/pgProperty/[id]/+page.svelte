@@ -115,7 +115,7 @@
 <!-- TODO: need to check if the user logged is the ower of currently showing pg property then we need show the contents-->
 {#if true} 
     <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-1 cursor-pointer"
-        onclick={goto("/pgForm", {state: {propertyData: data.pgProperty}})}
+        onclick={() => goto("/pgForm", {state: {propertyData: data.pgProperty}})}
     >
         <div>edit property</div> 
         <img src="/icons/edit.svg" alt="edit Icon" />

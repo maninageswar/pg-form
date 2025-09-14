@@ -61,14 +61,14 @@
 
 
     // getting page state data from pgProperty view page
-    let pgFormPageData = $page.state
+    let pgFormPageData = $page.state || "";
 
     console.log('pgFormPageData',pgFormPageData)
 
-    selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes;
-    noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors;
-    noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor;
-    pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities
+    selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes || [];
+    noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors || "";
+    noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor || "";
+    pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities || [];
 
     let calculateRoomNumbers = () => {
         for (let floor = 0; floor <= noOfFloors; floor++) {
