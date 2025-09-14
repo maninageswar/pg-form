@@ -1,7 +1,7 @@
 <script>
     import MultiSelect from 'svelte-multiselect'
     import { enhance } from '$app/forms';
-
+    import { page } from '$app/stores';
     import { Checkbox, Label, useId } from "bits-ui";
 	import Check from "phosphor-svelte/lib/Check";
 	import Minus from "phosphor-svelte/lib/Minus";
@@ -55,20 +55,20 @@
     let selectedRoomTypes = $state([]);
     let roomNumbers = $state([]);
     let imageFiles = $state([]);
-    let pgAmenitiesCheckboxes; // to access the checkboxes for pg amenities
+    let pgAmenitiesValues = $state([]);
 
-    // edit check
-    let pgAmenitiesValues = $state([])
-    // let pgAmenitiesValues = $state([
-    //     'studyTableChair',
-    //     'cupboardWardrobe',
-    //     'geyserHotWater',
-    //     'refrigerator',
-    //     'threeMeals',
-    //     'roomCleaning',
-    //     'biometricEntry'
-    // ])
+    let pgAmenitiesCheckboxes;
 
+
+    // getting page state data from pgProperty view page
+    let pgFormPageData = $page.state
+
+    console.log('pgFormPageData',pgFormPageData)
+
+    selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes;
+    noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors;
+    noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor;
+    pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities
 
     let calculateRoomNumbers = () => {
         for (let floor = 0; floor <= noOfFloors; floor++) {
@@ -112,9 +112,9 @@
 </script>
 
 <!-- snippets -->
-{#snippet Input(name,type,label,placeholder='')}
+{#snippet Input(name,type,label,bindValue='',placeholder='')}
     <label for={name}>{label}</label><span class="text-red-500">*</span>
-    <input {type} id={name} {name} {placeholder} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+    <input {type} id={name} {name} {placeholder} value={bindValue} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
 {/snippet}
 
 {#snippet MyCheckbox({ value, label })}
@@ -153,39 +153,39 @@
 
     <h3 class="mb-2">owner details</h3>
 
-    {@render Input("ownerName", "text", "name")}
+    {@render Input("ownerName", "text", "name", pgFormPageData.propertyData?.ownerName)}
 
-    {@render Input("ownerNumber", "number", "mobile")}
+    {@render Input("ownerNumber", "number", "mobile", pgFormPageData.propertyData?.ownerNumber)}
 
-    {@render Input("ownerEmail", "email", "email")}
+    {@render Input("ownerEmail", "email", "email", pgFormPageData.propertyData?.ownerEmail)}
 
     <!-- pg details -->
 
     <h3 class="mt-5 mb-2">pg details</h3>
 
-    {@render Input("pgName", "text", "name")}
+    {@render Input("pgName", "text", "name", pgFormPageData.propertyData?.pgName)}
 
     <label for="pgAddress">address</label><span class="text-red-500">*</span>
-    <textarea id="pgAddress" name="pgAddress" rows="3" cols="40" class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky" placeholder="enter address"></textarea>
+    <textarea id="pgAddress" name="pgAddress" rows="3" cols="40" value={pgFormPageData.propertyData?.pgAddress} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky" placeholder="enter address"></textarea>
 
-    {@render Input("pgCity", "text", "city/district/town")}
+    {@render Input("pgCity", "text", "city/district/town", pgFormPageData.propertyData?.pgCity)}
 
     <label for="pgState">state</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
-        <Select items={states} required={true} name="pgState"/>
+        <Select items={states} required={true} name="pgState" value={pgFormPageData.propertyData?.pgState}/>
     </div>
 
-    {@render Input("pgLandmark", "text", "landmark")}
+    {@render Input("pgLandmark", "text", "landmark", pgFormPageData.propertyData?.pgLandmark)}
 
-    {@render Input("pgPincode", "number", "pincode")}
+    {@render Input("pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
     
-    {@render Input("pgLocation", "url", "location", "please provide the location link")}
+    {@render Input("pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
 
-    {@render Input("pgDepositAmount", "number", "deposite amount")}
+    {@render Input("pgDepositAmount", "number", "deposite amount", pgFormPageData.propertyData?.pgDepositAmount)}
 
     <label for="pgType">pg type</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
-        <Select items={pgType} required={true} name="pgType"/>
+        <Select items={pgType} required={true} name="pgType" value={pgFormPageData.propertyData?.pgType}/>
     </div>
     <!-- <select id="pgType" name="pgType" required class="w-full mt-1 mb-4 bg-transparent placeholder:text-pg-sky text-sm border border-pg-sky rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-pg-sky hover:border-pg-sky appearance-none cursor-pointer">
         <option value="" selected>select type</option>
@@ -206,7 +206,9 @@
      {#each selectedRoomTypes as selectedRoomType }
         <div class="flex gap-3 justify-around items-baseline">
             <div><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType} rent</label><span class="text-red-500">*</span></div><span>:</span>
-            <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+            <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" 
+                value={pgFormPageData.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] || "" } 
+                class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
         </div>
      {/each}
 
@@ -302,8 +304,11 @@
         </label>
     </div>    
     
-
-    <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md float-right" type="submit">submit</button>
+    {#if pgFormPageData?.propertyData}
+        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="button">update property</button>
+    {:else}
+        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
+    {/if}
 
     
     <br>
@@ -389,6 +394,4 @@
     :global(.multiselect .remove):hover {
         background: none !important;
     }
-
-
 </style>

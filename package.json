@@ -21,6 +21,7 @@
 		"vite": "^7.0.4"
 	},
 	"dependencies": {
+		"@googlemaps/js-api-loader": "^1.16.10",
 		"bits-ui": "^2.8.10",
 		"phosphor-svelte": "^3.0.1",
 		"pocketbase": "^0.26.2",

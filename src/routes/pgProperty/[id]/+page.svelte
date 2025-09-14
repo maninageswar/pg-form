@@ -1,17 +1,42 @@
 <script>
+    import { PUBLIC_GOOGLE_MAP_API_KEY, PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
+    import { goto } from "$app/navigation";
     import { page } from '$app/state';
+    import { onMount } from 'svelte';
+    import * as gmapsLoader from '@googlemaps/js-api-loader';
+    const { Loader } = gmapsLoader;
 
     let { data } = $props();
-    console.log('data',data.pgProperty)
+    let mapElement;
+    console.log('data.pgProperty',data.pgProperty)
+
+    onMount(() => {
+        const loader = new Loader({
+            apiKey: PUBLIC_GOOGLE_MAP_API_KEY,
+            version: "weekly",
+        });
+
+        let map;
+        loader.load().then(async () => {
+            const { Map } = await google.maps.importLibrary("maps");
+        
+            map = new Map(mapElement, {
+            center: { lat: 12.9517943, lng: 77.6985907 },
+            zoom: 17,
+            });
+
+        });
+    });
 </script>
 
 <h2 class="mb-5 font-Manrope">pg information</h2>
 
 <div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
-[&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:ml-3 mb-5">
-    <img class="inline-block w-[280px] h-[175px] object-cover snap-start" src="/pgImages/image2.png" alt="">
-    <img class="inline-block w-[280px] h-[175px] object-cover snap-start" src="/pgImages/image2.png" alt="">
-    <img class="inline-block w-[280px] h-[175px] object-cover snap-start" src="/pgImages/image2.png" alt="">
+[&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:mr-3 mb-5 *:shadow-xl">
+    {#each data.pgProperty.pgImages as pgImage}
+        <div class="w-[85%] h-[176px] border border-pg-sky inline-block"><img class="w-full h-full object-cover" src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}" alt="pg-image"></div>
+        <!-- <div class="w-[85%] h-[176px] border border-pg-sky inline-block">{pgImage}</div> -->
+    {/each}
 </div>
 
 <div class="mt-3">
@@ -21,7 +46,7 @@
 
 <div class="mt-3">
     <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">type</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgType.value}</p>
+    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgType}</p>
 </div>
 
 <div class="mt-3">
@@ -38,17 +63,8 @@
 </div>
 
 
-<div class="mt-3 h-60 rounded overflow-hidden shadow">
-  <iframe
-    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d243.0191611890725!2d77.69597336297588!3d12.952223693502285!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3bae13ca553bf095%3A0x9684697de5f2837c!2sSRI%20SHIVA%20PG%20FOR%20GENTS!5e0!3m2!1sen!2sin!4v1757425463716!5m2!1sen!2sin"
-    width="100%"
-    height="100%"
-    style="border:0"
-    loading="lazy"
-    allowfullscreen
-    referrerpolicy="no-referrer-when-downgrade"
-  ></iframe>
-</div>
+<div class="mt-3 w-full h-60 rounded overflow-hidden shadow" bind:this={mapElement} id="map"></div>
+
 
 <h2 class="mt-5 mb-5 font-Manrope">rooms types & pricing</h2>
 
@@ -96,9 +112,24 @@
     </div>
 {/if}
 
+<!-- TODO: need to check if the user logged is the ower of currently showing pg property then we need show the contents-->
+{#if true} 
+    <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-1 cursor-pointer"
+        onclick={goto("/pgForm", {state: {propertyData: data.pgProperty}})}
+    >
+        <div>edit property</div> 
+        <img src="/icons/edit.svg" alt="edit Icon" />
+    </button>
+{:else}
+    <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer">book rooms</button>
+{/if}
 
-<button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full">book rooms</button>
+<br>
+<br>
+<br>
 
-<br>
-<br>
-<br>
+<style>
+    :global(#map > div:first-child + div) {
+        display: none !important;
+    }
+</style>
