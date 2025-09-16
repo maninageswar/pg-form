@@ -54,12 +54,12 @@
     <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">&#8377;{data.pgProperty.pgDepositAmount}</p>
 </div>
 
-<div class="mt-3 flex items-center justify-between">
-    <div class="basis-[90%]">
-        <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">location</p>
-        <p class="text-[#4b819b] text-sm font-normal">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
+<div class="mt-3">
+    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">location</p>
+    <div class="flex items-center justify-between">
+        <p class="text-[#4b819b] text-sm font-normal basis-[90%]">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
+        <img src="/icons/location.svg" alt="Location Icon" />
     </div>
-    <img src="/icons/location.svg" alt="Location Icon" />
 </div>
 
 

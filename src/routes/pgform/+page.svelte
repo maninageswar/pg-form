@@ -170,12 +170,12 @@
 
     {@render Input("pgCity", "text", "city/district/town", pgFormPageData.propertyData?.pgCity)}
 
+    {@render Input("pgLandmark", "text", "landmark", pgFormPageData.propertyData?.pgLandmark)}
+
     <label for="pgState">state</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
         <Select items={states} required={true} name="pgState" value={pgFormPageData.propertyData?.pgState}/>
     </div>
-
-    {@render Input("pgLandmark", "text", "landmark", pgFormPageData.propertyData?.pgLandmark)}
 
     {@render Input("pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
     
@@ -207,7 +207,7 @@
         <div class="flex gap-3 justify-around items-baseline">
             <div><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType} rent</label><span class="text-red-500">*</span></div><span>:</span>
             <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" 
-                value={pgFormPageData.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] || "" } 
+                value={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] : "" } 
                 class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
         </div>
      {/each}
@@ -292,7 +292,9 @@
             {#each imageFiles as file, i}
                 <li>
                 {file.name}
-                <button onclick={() => removeFile(i)} class="delete-btn text-pg-sky px-4 py-2 rounded-md">✖</button>
+                <button onclick={() => removeFile(i)} class="delete-btn text-pg-sky px-4 py-2 rounded-md">
+                    <img src="/icons/close.svg" alt="close Icon" />
+                </button>
                 </li>
             {/each}
         </ul>
