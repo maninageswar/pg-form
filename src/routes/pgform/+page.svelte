@@ -6,6 +6,7 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import Minus from "phosphor-svelte/lib/Minus";
     import Select from 'svelte-select';
+    import { untrack } from 'svelte';
 
     let pgType = ['gents', 'ladies', 'co-live'];
 
@@ -59,6 +60,26 @@
 
     let pgAmenitiesCheckboxes;
 
+    let form;
+
+    $effect(() => {
+        untrack(()=>{
+            if (pgFormPageData?.propertyData) {
+                const assignedRooms = pgFormPageData?.propertyData.sharing1Rooms?.concat(
+                                   pgFormPageData?.propertyData.sharing2Rooms || [],
+                                   pgFormPageData?.propertyData.sharing3Rooms || [],
+                                   pgFormPageData?.propertyData.sharing4Rooms || [],
+                                   pgFormPageData?.propertyData.sharing5Rooms || []
+                                ) || [];
+                calculateRoomNumbers()
+                if (assignedRooms.length > 0) {
+                    roomNumbers = roomNumbers.filter(room => !assignedRooms.includes(room));
+                }
+                isFormDataInEditModeIsEqualToViewPageData()
+            }
+        })                    
+    })
+
 
     // getting page state data from pgProperty view page
     let pgFormPageData = $page.state || "";
@@ -94,7 +115,6 @@
         roomNumbers.sort((a, b) => a - b);
     }
 
-
     function handleFiles(event) {
         const files = Array.from(event.target.files).filter(f => f.type.startsWith('image/'));
         imageFiles.push(...files.filter(f => !imageFiles.includes(f)));
@@ -104,9 +124,12 @@
         imageFiles.splice(index, 1);
     }
 
-    function checkboxValuedChanged(event) {
-        // const formData = new FormData(event.target.form);
-        console.log('checkboxValuedChanged','formData')
+    function isFormDataInEditModeIsEqualToViewPageData() {
+        const formData = new FormData(form);
+        for (let [key, value] of formData.entries()) {
+            console.log(`${key}: ${value}`);
+        }
+        return true;
     }
 
 </script>
@@ -123,7 +146,7 @@
         <Checkbox.Root
             {id}
             aria-labelledby="{id}-label"
-            class="border-pg-sky data-[state=unchecked]:border-pg-sky data-[state=checked]:border-pg-sky data-[state=unchecked]:bg-background data-[state=unchecked]:hover:border-dark-40 peer inline-flex size-[25px] items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
+            class="border-pg-sky data-[state=unchecked]:border-pg-sky data-[state=checked]:border-pg-sky data-[state=unchecked]:bg-backgrounddata-[state=unchecked]:hover:border-dark-40 peer inline-flex size-[25px] items-center justify-center rounded-md border transition-all duration-150 ease-in-out active:scale-[0.98]"
             {value}
         >
             {#snippet children({ checked, indeterminate })}
@@ -147,7 +170,7 @@
 {/snippet}
 
 
-<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance enctype="multipart/form-data">
+<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={form} enctype="multipart/form-data">
 
     <!-- owner details -->
 
@@ -230,7 +253,8 @@
         {#each selectedRoomTypes as selectedRoomType }
             <div class="mb-4">
                 <label class="inline-block mb-1">{selectedRoomType}</label>
-                <MultiSelect 
+                <MultiSelect
+                selected={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rooms`] : []}
                 closeDropdownOnSelect = {false}
                 onadd = {removeAddedValuesFromRoomNumbers} 
                 onremove = {addRemovedValuetoRoomNumbers}
@@ -250,7 +274,6 @@
         name="pgAmenities"
         bind:value={pgAmenitiesValues}
         bind:this={pgAmenitiesCheckboxes}
-        onValueChange={checkboxValuedChanged}
     >
         <label for=pgAmenities>pg amenities</label>
         <div class="grid grid-flow-col grid-rows-10 gap-4">
@@ -307,7 +330,7 @@
     </div>    
     
     {#if pgFormPageData?.propertyData}
-        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="button">update property</button>
+        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" disabled={isFormDataInEditModeIsEqualToViewPageData} type="button">update property</button>
     {:else}
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
     {/if}

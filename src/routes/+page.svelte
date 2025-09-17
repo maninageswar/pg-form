@@ -12,5 +12,5 @@
 <br>
 
 {#each data.pgInventories.items as pgInventory}
-  <button class="mt-5 bg-pg-sky text-white" onclick={goto(`/pgProperty/${pgInventory.id}`)}>{pgInventory.pgName}</button><br>
+  <button class="mt-5 bg-pg-sky text-white" onclick={() => goto(`/pgProperty/${pgInventory.id}`)}>{pgInventory.pgName}</button><br>
 {/each}
