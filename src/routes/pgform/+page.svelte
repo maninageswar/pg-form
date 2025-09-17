@@ -62,6 +62,7 @@
 
     let form;
 
+    // check if you can you onMount instead of  this effect
     $effect(() => {
         untrack(()=>{
             if (pgFormPageData?.propertyData) {
@@ -92,6 +93,8 @@
     pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities || [];
 
     let calculateRoomNumbers = () => {
+        roomNumbers = [];
+        if (!noOfFloors || !noOfRoomsInEachFloor) return;
         for (let floor = 0; floor <= noOfFloors; floor++) {
             for (let room = 1; room <= noOfRoomsInEachFloor; room++) {
                 const roomNum = `${floor}${room.toString().padStart(2, '0')}`;
@@ -126,18 +129,18 @@
 
     function isFormDataInEditModeIsEqualToViewPageData() {
         const formData = new FormData(form);
-        for (let [key, value] of formData.entries()) {
-            console.log(`${key}: ${value}`);
-        }
+        // for (let [key, value] of formData.entries()) {
+        //     console.log(`${key}: ${value}`);
+        // }
         return true;
     }
 
 </script>
 
 <!-- snippets -->
-{#snippet Input(name,type,label,bindValue='',placeholder='')}
+{#snippet Input(required,name,type,label,bindValue='',placeholder='')}
     <label for={name}>{label}</label><span class="text-red-500">*</span>
-    <input {type} id={name} {name} {placeholder} value={bindValue} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+    <input {type} id={name} {name} {placeholder} value={bindValue} {required} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
 {/snippet}
 
 {#snippet MyCheckbox({ value, label })}
@@ -176,35 +179,35 @@
 
     <h3 class="mb-2">owner details</h3>
 
-    {@render Input("ownerName", "text", "name", pgFormPageData.propertyData?.ownerName)}
+    {@render Input(true, "ownerName", "text", "name", pgFormPageData.propertyData?.ownerName)}
 
-    {@render Input("ownerNumber", "number", "mobile", pgFormPageData.propertyData?.ownerNumber)}
+    {@render Input(true, "ownerNumber", "number", "mobile", pgFormPageData.propertyData?.ownerNumber)}
 
-    {@render Input("ownerEmail", "email", "email", pgFormPageData.propertyData?.ownerEmail)}
+    {@render Input(true, "ownerEmail", "email", "email", pgFormPageData.propertyData?.ownerEmail)}
 
     <!-- pg details -->
 
     <h3 class="mt-5 mb-2">pg details</h3>
 
-    {@render Input("pgName", "text", "name", pgFormPageData.propertyData?.pgName)}
+    {@render Input(true, "pgName", "text", "name", pgFormPageData.propertyData?.pgName)}
 
     <label for="pgAddress">address</label><span class="text-red-500">*</span>
-    <textarea id="pgAddress" name="pgAddress" rows="3" cols="40" value={pgFormPageData.propertyData?.pgAddress} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky" placeholder="enter address"></textarea>
+    <textarea id="pgAddress" name="pgAddress" rows="3" cols="40" value={pgFormPageData.propertyData?.pgAddress} required class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky" placeholder="enter address"></textarea>
 
-    {@render Input("pgCity", "text", "city/district/town", pgFormPageData.propertyData?.pgCity)}
+    {@render Input(true, "pgCity", "text", "city/district/town", pgFormPageData.propertyData?.pgCity)}
 
-    {@render Input("pgLandmark", "text", "landmark", pgFormPageData.propertyData?.pgLandmark)}
+    {@render Input(false, "pgLandmark", "text", "landmark", pgFormPageData.propertyData?.pgLandmark)}
 
     <label for="pgState">state</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
         <Select items={states} required={true} name="pgState" value={pgFormPageData.propertyData?.pgState}/>
     </div>
 
-    {@render Input("pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
+    {@render Input(true, "pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
     
-    {@render Input("pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
+    {@render Input(true, "pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
 
-    {@render Input("pgDepositAmount", "number", "deposite amount", pgFormPageData.propertyData?.pgDepositAmount)}
+    {@render Input(true, "pgDepositAmount", "number", "deposite amount", pgFormPageData.propertyData?.pgDepositAmount)}
 
     <label for="pgType">pg type</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
@@ -231,7 +234,8 @@
             <div><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType} rent</label><span class="text-red-500">*</span></div><span>:</span>
             <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" 
                 value={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] : "" } 
-                class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+                class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"
+                required/>
         </div>
      {/each}
 
@@ -261,6 +265,7 @@
                 onremoveAll = {addRemovedValuetoRoomNumbers}
                 name={`${selectedRoomType.replace(" ", "")}Rooms`} 
                 options={roomNumbers}
+                required={true}
                 />
             </div>
         {/each}
@@ -313,7 +318,7 @@
     {#if imageFiles.length>0}
         <ul class="file-list">
             {#each imageFiles as file, i}
-                <li>
+                <li class="border border-pg-sky rounded-md">
                 {file.name}
                 <button onclick={() => removeFile(i)} class="delete-btn text-pg-sky px-4 py-2 rounded-md">
                     <img src="/icons/close.svg" alt="close Icon" />
