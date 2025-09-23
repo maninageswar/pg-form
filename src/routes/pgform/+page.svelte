@@ -1,4 +1,5 @@
 <script>
+    import PocketBase from "pocketbase";
     import MultiSelect from 'svelte-multiselect'
     import { enhance } from '$app/forms';
     import { page } from '$app/stores';
@@ -6,47 +7,50 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import Minus from "phosphor-svelte/lib/Minus";
     import Select from 'svelte-select';
-    import { untrack } from 'svelte';
+    import { onMount } from 'svelte';
+    import { PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
+    import { redirect } from '@sveltejs/kit';
+    import { goto } from "$app/navigation";
 
     let pgType = ['gents', 'ladies', 'co-live'];
 
     let states = [
-        "Andhra Pradesh",
-        "Arunachal Pradesh",
-        "Assam",
-        "Bihar",
-        "Chhattisgarh",
-        "Goa",
-        "Gujarat",
-        "Haryana",
-        "Himachal Pradesh",
-        "Jharkhand",
-        "Karnataka",
-        "Kerala",
-        "Madhya Pradesh",
-        "Maharashtra",
-        "Manipur",
-        "Meghalaya",
-        "Mizoram",
-        "Nagaland",
-        "Odisha",
-        "Punjab",
-        "Rajasthan",
-        "Sikkim",
-        "Tamil Nadu",
-        "Telangana",
-        "Tripura",
-        "Uttar Pradesh",
-        "Uttarakhand",
-        "West Bengal",
-        "Andaman and Nicobar Islands",
-        "Chandigarh",
-        "Dadra and Nagar Haveli and Daman and Diu",
-        "Delhi",
-        "Jammu and Kashmir",
-        "Ladakh",
-        "Lakshadweep",
-        "Puducherry"
+        "andhra pradesh",
+        "arunachal pradesh",
+        "assam",
+        "bihar",
+        "chhattisgarh",
+        "goa",
+        "gujarat",
+        "haryana",
+        "himachal pradesh",
+        "jharkhand",
+        "karnataka",
+        "kerala",
+        "madhya pradesh",
+        "maharashtra",
+        "manipur",
+        "meghalaya",
+        "mizoram",
+        "nagaland",
+        "odisha",
+        "punjab",
+        "rajasthan",
+        "sikkim",
+        "tamil nadu",
+        "telangana",
+        "tripura",
+        "uttar pradesh",
+        "uttarakhand",
+        "west bengal",
+        "andaman and nicobar islands",
+        "chandigarh",
+        "dadra and nagar haveli and daman and diu",
+        "delhi",
+        "jammu and kashmir",
+        "ladakh",
+        "lakshadweep",
+        "puducherry"
     ];
     
     const roomTypes = ['sharing 1', 'sharing 2', 'sharing 3', 'sharing 4', 'sharing 5'];
@@ -62,24 +66,38 @@
 
     let form;
 
-    // check if you can you onMount instead of  this effect
-    $effect(() => {
-        untrack(()=>{
-            if (pgFormPageData?.propertyData) {
-                const assignedRooms = pgFormPageData?.propertyData.sharing1Rooms?.concat(
-                                   pgFormPageData?.propertyData.sharing2Rooms || [],
-                                   pgFormPageData?.propertyData.sharing3Rooms || [],
-                                   pgFormPageData?.propertyData.sharing4Rooms || [],
-                                   pgFormPageData?.propertyData.sharing5Rooms || []
-                                ) || [];
-                calculateRoomNumbers()
-                if (assignedRooms.length > 0) {
-                    roomNumbers = roomNumbers.filter(room => !assignedRooms.includes(room));
-                }
-                isFormDataInEditModeIsEqualToViewPageData()
+    onMount(async () => {
+		if (pgFormPageData?.propertyData) {
+            const assignedRooms = pgFormPageData?.propertyData.sharing1Rooms?.concat(
+                                pgFormPageData?.propertyData.sharing2Rooms || [],
+                                pgFormPageData?.propertyData.sharing3Rooms || [],
+                                pgFormPageData?.propertyData.sharing4Rooms || [],
+                                pgFormPageData?.propertyData.sharing5Rooms || []
+                            ) || [];
+            calculateRoomNumbers()
+            if (assignedRooms.length > 0) {
+                roomNumbers = roomNumbers.filter(room => !assignedRooms.includes(room));
             }
-        })                    
-    })
+
+            if (pgFormPageData?.propertyData.pgImages.length > 0) {
+                await fetchImages(pgFormPageData?.propertyData.pgImages)
+            }
+            // isFormDataInEditModeIsEqualToViewPageData()
+        }
+	});
+
+    async function fetchImages(pgImages) {
+        const pb = new PocketBase("http://127.0.0.1:8090");
+        await pb.admins.authWithPassword("testpocketbase@gmail.com","pocketbaseYouSavedMyDay");
+        for (const fileName of pgImages) {
+            const url = `${PUBLIC_POCKETBASE_REST_API}/files/${pgFormPageData?.propertyData.collectionId}/${pgFormPageData?.propertyData.id}/${fileName}`;
+            const res = await fetch(url);
+            const blob = await res.blob();
+            const file = new File([blob], fileName.replace(/_[^_]+(?=\.[^.]+$)/, '').replace(/[\s_]+/g, '-'), { type: blob.type });
+            imageFiles.push(file);
+        }
+    }
+
 
 
     // getting page state data from pgProperty view page
@@ -132,7 +150,28 @@
         // for (let [key, value] of formData.entries()) {
         //     console.log(`${key}: ${value}`);
         // }
-        return true;
+        return false;
+    }
+
+    function handleUpdateSubmit(e) {
+        e.preventDefault();
+
+        const formData = new FormData(form);
+        
+        formData.delete("pgImages");
+        for(let i=0; i < imageFiles.length; i++) {
+            formData.append('pgImages',imageFiles[i])
+        }
+
+        // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
+        fetch(`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`, {
+        method: "POST",
+        body: formData
+        }).then((response) => { 
+             if (response.ok) {
+                goto(`/pgProperty/${pgFormPageData?.propertyData.id}`)
+             }
+        });
     }
 
 </script>
@@ -284,7 +323,7 @@
         <div class="grid grid-flow-col grid-rows-10 gap-4">
             {@render MyCheckbox({ label: "study table & chair", value: "studyTableChair" })}
             {@render MyCheckbox({ label: "cupboard/wardrobe", value: "cupboardWardrobe" })}
-            {@render MyCheckbox({ label: "geyser/hot water supply", value: "geyserHotWater" })}
+            {@render MyCheckbox({ label: "geyser/hot water", value: "geyserHotWater" })}
 
             {@render MyCheckbox({ label: "refrigerator", value: "refrigerator" })}
             {@render MyCheckbox({ label: "3 meals a day", value: "threeMeals" })}
@@ -319,8 +358,13 @@
         <ul class="file-list">
             {#each imageFiles as file, i}
                 <li class="border border-pg-sky rounded-md">
-                {file.name}
-                <button onclick={() => removeFile(i)} class="delete-btn text-pg-sky px-4 py-2 rounded-md">
+                {file.name
+                .replace(/[\s_]+/g, '-')
+                .replace(/[^a-z0-9\-\.]/gi, '')
+                .replace(/-+/g, '-')
+                .toLowerCase()
+                }
+                <button onclick={() => removeFile(i)} type="button" class="delete-btn text-pg-sky px-4 py-2 rounded-md">
                     <img src="/icons/close.svg" alt="close Icon" />
                 </button>
                 </li>
@@ -335,7 +379,9 @@
     </div>    
     
     {#if pgFormPageData?.propertyData}
-        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" disabled={isFormDataInEditModeIsEqualToViewPageData} type="button">update property</button>
+    <!-- // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
+        <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
+         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" onclick={handleUpdateSubmit}>update property</button>
     {:else}
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
     {/if}

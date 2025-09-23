@@ -10,6 +10,28 @@
     let mapElement;
     console.log('data.pgProperty',data.pgProperty)
 
+    const pgAmenitiesLabels = {
+        studyTableChair: "study table & chair",
+        cupboardWardrobe: "cupboard/wardrobe",
+        geyserHotWater: "geyser/hot water",
+        refrigerator: "refrigerator",
+        threeMeals: "3 meals a day",
+        roomCleaning: "room cleaning",
+        washingMachines: "washing machines",
+        wifi: "high speed wi-fi",
+        commonTv: "common tv",
+        cctvSurveillance: "cctv surveillance",
+        biometricEntry: "biometric entry",
+        parkingSpace: "parking space",
+        airConditioning: "air conditioning",
+        gymFitnessArea: "gym/fitness area",
+        indoorGames: "indoor games",
+        liftAvaliability: "lift/elevator",
+        powerBackup: "power backup",
+        commonKitchen: "common kitchen",
+        roWater: "ro water"
+    }
+
     onMount(() => {
         const loader = new Loader({
             apiKey: PUBLIC_GOOGLE_MAP_API_KEY,
@@ -46,7 +68,7 @@
 
 <div class="mt-3">
     <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">type</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgType}</p>
+    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">pg for {data.pgProperty.pgType}</p>
 </div>
 
 <div class="mt-3">
@@ -57,7 +79,7 @@
 <div class="mt-3">
     <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">location</p>
     <div class="flex items-center justify-between">
-        <p class="text-[#4b819b] text-sm font-normal basis-[90%]">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
+        <p class="text-[#4b819b] text-sm font-normal basis-[90%] lowercase">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
         <img src="/icons/location.svg" alt="Location Icon" />
     </div>
 </div>
@@ -88,7 +110,7 @@
     {#each data.pgProperty.pgAmenities as pgAmenities}
         <div class="p-2 flex items-center gap-1">
             <img src="/icons/{pgAmenities}.svg" alt="">
-            <p class="text-[#0d171c] text-sm font-normal leading-normal">{pgAmenities.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}</p>
+            <p class="text-[#0d171c] text-sm font-normal leading-normal">{pgAmenitiesLabels[pgAmenities]}</p>
         </div>
     {/each}
 </div>
