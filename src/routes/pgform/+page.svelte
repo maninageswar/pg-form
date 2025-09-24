@@ -12,9 +12,9 @@
     import { redirect } from '@sveltejs/kit';
     import { goto } from "$app/navigation";
 
-    let pgType = ['gents', 'ladies', 'co-live'];
+    const pgType = ['gents', 'ladies', 'co-live'];
 
-    let states = [
+    const states = [
         "andhra pradesh",
         "arunachal pradesh",
         "assam",
@@ -61,10 +61,26 @@
     let roomNumbers = $state([]);
     let imageFiles = $state([]);
     let pgAmenitiesValues = $state([]);
-
-    let pgAmenitiesCheckboxes;
-
     let form;
+
+    // getting page state data from pgProperty view page
+    let pgFormPageData = $page.state || "";
+
+    console.log('pgFormPageData',pgFormPageData)
+
+    selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes || [];
+    noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors || "";
+    noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor || "";
+    pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities || [];
+
+    let updateButtonDisabled = $state(true);
+
+    const pgFormPageDataToCompare = { ...pgFormPageData?.propertyData };
+    delete pgFormPageDataToCompare.collectionId;
+    delete pgFormPageDataToCompare.collectionName;
+    delete pgFormPageDataToCompare.created;
+    delete pgFormPageDataToCompare.id;
+    delete pgFormPageDataToCompare.updated;
 
     onMount(async () => {
 		if (pgFormPageData?.propertyData) {
@@ -82,13 +98,17 @@
             if (pgFormPageData?.propertyData.pgImages.length > 0) {
                 await fetchImages(pgFormPageData?.propertyData.pgImages)
             }
-            // updateButtonDisabled()
         }
 	});
 
+    $effect(() => {
+        pgAmenitiesValues
+        if (pgFormPageData?.propertyData) {
+            checkFormDataInEditModeIsEqualToViewPageData()
+        }
+    });
+
     async function fetchImages(pgImages) {
-        const pb = new PocketBase("http://127.0.0.1:8090");
-        await pb.admins.authWithPassword("testpocketbase@gmail.com","pocketbaseYouSavedMyDay");
         for (const fileName of pgImages) {
             const url = `${PUBLIC_POCKETBASE_REST_API}/files/${pgFormPageData?.propertyData.collectionId}/${pgFormPageData?.propertyData.id}/${fileName}`;
             const res = await fetch(url);
@@ -97,17 +117,6 @@
             imageFiles.push(file);
         }
     }
-
-
-    // getting page state data from pgProperty view page
-    let pgFormPageData = $page.state || "";
-
-    console.log('pgFormPageData',pgFormPageData)
-
-    selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes || [];
-    noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors || "";
-    noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor || "";
-    pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities || [];
 
     let calculateRoomNumbers = () => {
         roomNumbers = [];
@@ -163,25 +172,6 @@
             }
         }
     }
-
-    let updateButtonDisabled = $state(true);
-
-    const pgFormPageDataToCompare = { ...pgFormPageData?.propertyData };
-    delete pgFormPageDataToCompare.collectionId;
-    delete pgFormPageDataToCompare.collectionName;
-    delete pgFormPageDataToCompare.created;
-    delete pgFormPageDataToCompare.id;
-    delete pgFormPageDataToCompare.updated;
-
-    let somevariable = $state(Object.fromEntries(new FormData(form).entries()));
-
-    $effect(() => {
-        pgAmenitiesValues
-        if (pgFormPageData?.propertyData) {
-            checkFormDataInEditModeIsEqualToViewPageData()
-        }
-    });
-   
 
     function checkFormDataInEditModeIsEqualToViewPageData() {
         if (pgFormPageData?.propertyData) {
@@ -330,13 +320,6 @@
     <div class="mt-1 mb-4">
         <Select items={pgType} required={true} name="pgType" value={pgFormPageData.propertyData?.pgType}/>
     </div>
-    <!-- <select id="pgType" name="pgType" required class="w-full mt-1 mb-4 bg-transparent placeholder:text-pg-sky text-sm border border-pg-sky rounded pl-3 pr-8 py-2 transition duration-300 ease focus:outline-none focus:border-pg-sky hover:border-pg-sky appearance-none cursor-pointer">
-        <option value="" selected>select type</option>
-        <option value="gents">gents</option>
-        <option value="ladies">ladies</option>
-        <option value="colive">co-live</option>
-    </select> -->
-
     
     <label for="pgType">pg room types</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
@@ -396,7 +379,6 @@
         class="flex flex-col gap-3 mt-4"
         name="pgAmenities"
         bind:value={pgAmenitiesValues}
-        bind:this={pgAmenitiesCheckboxes}
     >
         <label for=pgAmenities>pg amenities</label>
         <div class="grid grid-flow-col grid-rows-10 gap-4">

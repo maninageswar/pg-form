@@ -1,5 +1,6 @@
 import PocketBase from "pocketbase";
 import { redirect } from '@sveltejs/kit';
+import { authPocketBaseInstanceWithPassword } from '$lib/pocketbase/pocketbase.js';
 
 async function prepareFormData(request) {
   const formData = await request.formData();
@@ -20,11 +21,8 @@ async function prepareFormData(request) {
 
 export const actions = {
   createInventory: async ({ request }) => {
-    const pb = new PocketBase("http://127.0.0.1:8090");
-    await pb.admins.authWithPassword("testpocketbase@gmail.com","pocketbaseYouSavedMyDay");
-
+    const pb = await authPocketBaseInstanceWithPassword();
     const formData = await prepareFormData(request);
-
     try {
       const record = await pb.collection("pgProperties").create(formData);
       console.log("Record created:", record);
@@ -37,11 +35,8 @@ export const actions = {
   },
 
   updateInventory: async ({ request, url }) => {
-    const pb = new PocketBase("http://127.0.0.1:8090");
-    await pb.admins.authWithPassword("testpocketbase@gmail.com","pocketbaseYouSavedMyDay");
-
+    const pb = await authPocketBaseInstanceWithPassword();
     const formData = await prepareFormData(request);
-
     try {
       const record = await pb.collection("pgProperties").update(url.searchParams.get("recordId"), formData);
       console.log("Record updated:", record);
