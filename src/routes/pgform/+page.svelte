@@ -7,7 +7,7 @@
 	import Check from "phosphor-svelte/lib/Check";
 	import Minus from "phosphor-svelte/lib/Minus";
     import Select from 'svelte-select';
-    import { onMount } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
     import { redirect } from '@sveltejs/kit';
     import { goto } from "$app/navigation";
@@ -82,7 +82,7 @@
             if (pgFormPageData?.propertyData.pgImages.length > 0) {
                 await fetchImages(pgFormPageData?.propertyData.pgImages)
             }
-            // isFormDataInEditModeIsEqualToViewPageData()
+            // updateButtonDisabled()
         }
 	});
 
@@ -93,11 +93,10 @@
             const url = `${PUBLIC_POCKETBASE_REST_API}/files/${pgFormPageData?.propertyData.collectionId}/${pgFormPageData?.propertyData.id}/${fileName}`;
             const res = await fetch(url);
             const blob = await res.blob();
-            const file = new File([blob], fileName.replace(/_[^_]+(?=\.[^.]+$)/, '').replace(/[\s_]+/g, '-'), { type: blob.type });
+            const file = new File([blob], fileName.replace(/_[^_]+(?=\.[^.]+$)/, ''), { type: blob.type });
             imageFiles.push(file);
         }
     }
-
 
 
     // getting page state data from pgProperty view page
@@ -139,18 +138,97 @@
     function handleFiles(event) {
         const files = Array.from(event.target.files).filter(f => f.type.startsWith('image/'));
         imageFiles.push(...files.filter(f => !imageFiles.includes(f)));
+        if (pgFormPageData?.propertyData) {
+            checkIfImagesChangedInEditMode()
+        }
     }
 
     function removeFile(index) {
         imageFiles.splice(index, 1);
+        if (pgFormPageData?.propertyData) {
+            checkIfImagesChangedInEditMode()
+        }
     }
 
-    function isFormDataInEditModeIsEqualToViewPageData() {
-        const formData = new FormData(form);
-        // for (let [key, value] of formData.entries()) {
-        //     console.log(`${key}: ${value}`);
-        // }
-        return false;
+    function checkIfImagesChangedInEditMode() {
+        if (pgFormPageData.propertyData?.pgImages.length != imageFiles.length) {
+            updateButtonDisabled = false
+        } else {
+            for (const file of imageFiles) {
+                let formattedPgImageNames = pgFormPageData.propertyData?.pgImages.map(imgName => imgName.replace(/_[^_]+(?=\.[^.]+$)/, ''));
+                if (!formattedPgImageNames.includes(file.name)) {
+                    updateButtonDisabled = false
+                    return
+                }
+            }
+        }
+    }
+
+    let updateButtonDisabled = $state(true);
+
+    const pgFormPageDataToCompare = { ...pgFormPageData?.propertyData };
+    delete pgFormPageDataToCompare.collectionId;
+    delete pgFormPageDataToCompare.collectionName;
+    delete pgFormPageDataToCompare.created;
+    delete pgFormPageDataToCompare.id;
+    delete pgFormPageDataToCompare.updated;
+
+    let somevariable = $state(Object.fromEntries(new FormData(form).entries()));
+
+    $effect(() => {
+        pgAmenitiesValues
+        if (pgFormPageData?.propertyData) {
+            checkFormDataInEditModeIsEqualToViewPageData()
+        }
+    });
+   
+
+    function checkFormDataInEditModeIsEqualToViewPageData() {
+        if (pgFormPageData?.propertyData) {
+            tick().then(() => {
+                const formDataObjInEdit = Object.fromEntries(new FormData(form).entries());
+                formDataObjInEdit.pgAmenities = Object.values(pgAmenitiesValues);
+
+                for (const key in formDataObjInEdit) {
+                    if (key == 'pgImages') continue;
+
+                    if (key == 'pgAmenities' || ['pgRoomTypes','sharing1Rooms', 'sharing2Rooms', 'sharing3Rooms', 'sharing4Rooms', 'sharing5Rooms'].includes(key)) {
+                        if (arraysEqualUnordered(pgFormPageDataToCompare[key], key == 'pgAmenities' ? formDataObjInEdit[key]: JSON.parse(formDataObjInEdit[key]) )) {
+                            updateButtonDisabled = true;
+                            continue
+                        } else {
+                            updateButtonDisabled = false;
+                            break
+                        }
+                    }
+
+                    if (key == 'pgState' || key == 'pgType') {
+                        if (pgFormPageDataToCompare[key] == JSON.parse(formDataObjInEdit[key]).value) {
+                            updateButtonDisabled = true;
+                            continue
+                        } else {
+                            updateButtonDisabled = false;
+                            break
+                        }
+                    }
+                    
+                    if (pgFormPageDataToCompare[key] == formDataObjInEdit[key]) {
+                        updateButtonDisabled = true;
+                        continue
+                    } else {
+                        updateButtonDisabled = false;
+                        break
+                    }
+                }
+          })  
+        }
+    }
+
+    function arraysEqualUnordered(arr1, arr2) {
+        if (arr1.length !== arr2.length) return false;
+        const sorted1 = [...arr1].sort();
+        const sorted2 = [...arr2].sort();
+        return sorted1.every((val, i) => val === sorted2[i]);
     }
 
     function handleUpdateSubmit(e) {
@@ -212,7 +290,7 @@
 {/snippet}
 
 
-<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={form} enctype="multipart/form-data">
+<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={form} enctype="multipart/form-data" oninput={checkFormDataInEditModeIsEqualToViewPageData}>
 
     <!-- owner details -->
 
@@ -262,7 +340,7 @@
     
     <label for="pgType">pg room types</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
-        <MultiSelect closeDropdownOnSelect={false} bind:selected={selectedRoomTypes} name="pgRoomTypes" options={roomTypes} required={true}/>
+        <MultiSelect closeDropdownOnSelect={false} bind:selected={selectedRoomTypes} name="pgRoomTypes" options={roomTypes} onchange = {checkFormDataInEditModeIsEqualToViewPageData} required={true}/>
     </div>
 
 
@@ -299,6 +377,7 @@
                 <MultiSelect
                 selected={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rooms`] : []}
                 closeDropdownOnSelect = {false}
+                onchange = {checkFormDataInEditModeIsEqualToViewPageData}
                 onadd = {removeAddedValuesFromRoomNumbers} 
                 onremove = {addRemovedValuetoRoomNumbers}
                 onremoveAll = {addRemovedValuetoRoomNumbers}
@@ -358,12 +437,7 @@
         <ul class="file-list">
             {#each imageFiles as file, i}
                 <li class="border border-pg-sky rounded-md">
-                {file.name
-                .replace(/[\s_]+/g, '-')
-                .replace(/[^a-z0-9\-\.]/gi, '')
-                .replace(/-+/g, '-')
-                .toLowerCase()
-                }
+                {file.name}
                 <button onclick={() => removeFile(i)} type="button" class="delete-btn text-pg-sky px-4 py-2 rounded-md">
                     <img src="/icons/close.svg" alt="close Icon" />
                 </button>
@@ -381,7 +455,7 @@
     {#if pgFormPageData?.propertyData}
     <!-- // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
         <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
-         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" onclick={handleUpdateSubmit}>update property</button>
+         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled" disabled={updateButtonDisabled} onclick={handleUpdateSubmit}>update property</button>
     {:else}
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
     {/if}

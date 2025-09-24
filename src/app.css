@@ -9,6 +9,7 @@
 
 @theme {
     --color-pg-sky: #0ea5e9e6; /* Example: sky-500 with 90% opacity */
+    --color-pg-sky-button-disabled: #95d1ece6;
     --font-Manrope: Manrope, sans-serif;
 }
 
