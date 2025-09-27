@@ -11,6 +11,22 @@
     import { PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
     import { redirect } from '@sveltejs/kit';
     import { goto } from "$app/navigation";
+    import { success, warning, failure } from '$lib/notification'
+    import { preventKeyPress } from '$lib/utils/sharedlogic';
+
+    let { form } = $props();
+
+    $effect(()=>{
+        form;
+        if (form?.errors) handleErrors(form?.errors)
+        if (form?.propertyCreated) {
+            success(form?.propertyCreated)
+            // redirect to home page here
+        }
+        if (form?.propertyUpdated) {
+            success(form?.propertyUpdated)
+        }  
+    })
 
     const pgType = ['gents', 'ladies', 'co-live'];
 
@@ -61,7 +77,7 @@
     let roomNumbers = $state([]);
     let imageFiles = $state([]);
     let pgAmenitiesValues = $state([]);
-    let form;
+    let formElement;
 
     // getting page state data from pgProperty view page
     let pgFormPageData = $page.state || "";
@@ -176,7 +192,7 @@
     function checkFormDataInEditModeIsEqualToViewPageData() {
         if (pgFormPageData?.propertyData) {
             tick().then(() => {
-                const formDataObjInEdit = Object.fromEntries(new FormData(form).entries());
+                const formDataObjInEdit = Object.fromEntries(new FormData(formElement).entries());
                 formDataObjInEdit.pgAmenities = Object.values(pgAmenitiesValues);
 
                 for (const key in formDataObjInEdit) {
@@ -194,6 +210,16 @@
 
                     if (key == 'pgState' || key == 'pgType') {
                         if (pgFormPageDataToCompare[key] == JSON.parse(formDataObjInEdit[key]).value) {
+                            updateButtonDisabled = true;
+                            continue
+                        } else {
+                            updateButtonDisabled = false;
+                            break
+                        }
+                    }
+
+                    if (key == 'pgAddress') {
+                        if (pgFormPageDataToCompare[key].replace(/\r\n/g, '\n') == formDataObjInEdit[key].replace(/\r\n/g, '\n')) {
                             updateButtonDisabled = true;
                             continue
                         } else {
@@ -224,29 +250,60 @@
     function handleUpdateSubmit(e) {
         e.preventDefault();
 
-        const formData = new FormData(form);
+        const formData = new FormData(formElement);
         
         formData.delete("pgImages");
         for(let i=0; i < imageFiles.length; i++) {
             formData.append('pgImages',imageFiles[i])
         }
 
-        // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
+        // TODO:(learn how Form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
         fetch(`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`, {
         method: "POST",
         body: formData
         }).then((response) => { 
              if (response.ok) {
+                success('your property details have been updated successfully')
                 goto(`/pgProperty/${pgFormPageData?.propertyData.id}`)
+             } else {
+                console.error('Failed to update property:', response);
+                failure('something went wrong while updating property')
              }
         });
+    }
+
+    // async function handleUpdateSubmit(e) {
+    //     e.preventDefault();
+    //     const formData = new FormData(formElement);
+    //     formData.delete("pgImages");
+    //     for(let i=0; i < imageFiles.length; i++) {
+    //         formData.append('pgImages',imageFiles[i])
+    //     }
+
+    //     // TODO:(learn how Form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
+    //     const response = await fetch(`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`, {
+    //                                 method: "POST",
+    //                                 body: formData
+    //                             })
+    //     const data = await response.json();
+    //     console.log('response from update api',data)
+    //     console.log('form',form);
+    // }
+
+
+
+    function handleErrors(errors) {
+        console.error('Form submission error:', errors);
+        for (const key of Object.keys(errors)) {
+            failure(`${key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}: ${errors[key].message}`)
+        }
     }
 
 </script>
 
 <!-- snippets -->
 {#snippet Input(required,name,type,label,bindValue='',placeholder='')}
-    <label for={name}>{label}</label><span class="text-red-500">*</span>
+    <label for={name}>{label}</label><span class="text-red-500 {!required ? 'hidden' : ''}">*</span>
     <input {type} id={name} {name} {placeholder} value={bindValue} {required} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
 {/snippet}
 
@@ -280,7 +337,7 @@
 {/snippet}
 
 
-<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={form} enctype="multipart/form-data" oninput={checkFormDataInEditModeIsEqualToViewPageData}>
+<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={formElement} enctype="multipart/form-data" oninput={checkFormDataInEditModeIsEqualToViewPageData}>
 
     <!-- owner details -->
 
@@ -307,10 +364,16 @@
 
     <label for="pgState">state</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
-        <Select items={states} required={true} name="pgState" value={pgFormPageData.propertyData?.pgState}/>
+        <Select items={states} required={true} name="pgState" placeholder='please select' value={pgFormPageData.propertyData?.pgState} on:change={checkFormDataInEditModeIsEqualToViewPageData}/>
     </div>
 
-    {@render Input(true, "pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
+    <!-- remove the below commented line if pgpincode is working fine -->
+    <!-- {@render Input(true, "pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)} -->
+
+    <label for="pgNoOfRoomsInEachFloor">pincode</label><span class="text-red-500">*</span>
+            <input type="number" id="pgPincode" name="pgPincode" required value={pgFormPageData.propertyData?.pgPincode}
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
     
     {@render Input(true, "pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
 
@@ -318,7 +381,7 @@
 
     <label for="pgType">pg type</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
-        <Select items={pgType} required={true} name="pgType" value={pgFormPageData.propertyData?.pgType}/>
+        <Select items={pgType} required={true} name="pgType" placeholder='please select' value={pgFormPageData.propertyData?.pgType} on:change={checkFormDataInEditModeIsEqualToViewPageData}/>
     </div>
     
     <label for="pgType">pg room types</label><span class="text-red-500">*</span>
@@ -333,6 +396,7 @@
         <div class="flex gap-3 justify-around items-baseline">
             <div><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType} rent</label><span class="text-red-500">*</span></div><span>:</span>
             <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" 
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
                 value={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] : "" } 
                 class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"
                 required/>
@@ -342,12 +406,16 @@
     <div class="flex gap-4">
         <div>
             <label for="pgNoOfFloors">no. of floors</label><span class="text-red-500">*</span>
-            <input type="number" id="pgNoOfFloors" name="pgNoOfFloors" bind:value={noOfFloors} required oninput={calculateRoomNumbers} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+            <input type="number" id="pgNoOfFloors" name="pgNoOfFloors" bind:value={noOfFloors} required oninput={calculateRoomNumbers} 
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
         </div>
         
         <div>
             <label for="pgNoOfRoomsInEachFloor">no. of rooms in each floor</label><span class="text-red-500">*</span>
-            <input type="number" id="pgNoOfRoomsInEachFloor" name="pgNoOfRoomsInEachFloor" bind:value={noOfRoomsInEachFloor} required oninput={calculateRoomNumbers} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+            <input type="number" id="pgNoOfRoomsInEachFloor" name="pgNoOfRoomsInEachFloor" bind:value={noOfRoomsInEachFloor} required oninput={calculateRoomNumbers}
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
         </div>
         
     </div>

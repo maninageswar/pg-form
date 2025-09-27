@@ -5,6 +5,7 @@
     import { onMount } from 'svelte';
     import * as gmapsLoader from '@googlemaps/js-api-loader';
     const { Loader } = gmapsLoader;
+    import { authPocketBaseInstanceWithPassword } from '$lib/pocketbase/pocketbase.js';
 
     let { data } = $props();
     let mapElement;
@@ -49,15 +50,26 @@
 
         });
     });
+
+    async function deleteProperty(propertyId) {
+        console.log('property id',propertyId);
+        const pb = await authPocketBaseInstanceWithPassword();
+        await pb.collection('pgProperties').delete(propertyId);
+        goto('/')
+    }
 </script>
 
-<h2 class="mb-5 font-Manrope">pg information</h2>
+<div class="flex items-center justify-between mb-5">
+    <h2 class="font-Manrope">pg information</h2>
+    <button class="cursor-pointer bg-pg-red-button rounded-md p-1" onclick={() => deleteProperty(data.pgProperty.id)}>
+        <img src="/icons/delete.svg" alt="delete icon"/>
+    </button>
+</div>
 
 <div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:mr-3 mb-5 *:shadow-xl">
     {#each data.pgProperty.pgImages as pgImage}
         <div class="w-[85%] h-[176px] border border-pg-sky inline-block"><img class="w-full h-full object-cover" src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}" alt="pg-image"></div>
-        <!-- <div class="w-[85%] h-[176px] border border-pg-sky inline-block">{pgImage}</div> -->
     {/each}
 </div>
 
@@ -94,7 +106,7 @@
 <div class="mt-3 grid grid-cols-2 gap-3 *:border *:border-pg-sky *:h-[170px] *:rounded-xl *:shadow-sm">
     {#each data.pgProperty.pgRoomTypes as roomType}
         <div class="p-4 flex flex-col justify-between">
-            <img src="/icons/bed.svg" alt="Location Icon" class="w-[45px] h-[45px]" />
+            <img src="/icons/bed.svg" alt="bed icon" class="w-[45px] h-[45px]" />
             <div class="h-[55%]">
                 <h2 class="text-[#0d171c] text-base font-bold leading-tight mb-2">{roomType}</h2>
                 <p class="text-[#4b819b] text-sm font-normal leading-normal">&#8377;{data.pgProperty[`${roomType.replace(/\s+/g, '')}Rent`]}/month</p>

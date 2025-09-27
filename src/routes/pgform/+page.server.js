@@ -1,5 +1,4 @@
-import PocketBase from "pocketbase";
-import { redirect } from '@sveltejs/kit';
+import { fail, json } from '@sveltejs/kit';
 import { authPocketBaseInstanceWithPassword } from '$lib/pocketbase/pocketbase.js';
 
 async function prepareFormData(request) {
@@ -25,12 +24,10 @@ export const actions = {
     const formData = await prepareFormData(request);
     try {
       const record = await pb.collection("pgProperties").create(formData);
-      console.log("Record created:", record);
-    } catch (err) {
-      console.error(
-        "Failed to create record:",
-        err.response?.data || err.message
-      );
+      return { propertyCreated : 'your property details have been saved successfully you can veiw it once the verification is done'};
+    } catch (error) {
+      console.error("Failed to create record:",error.response?.data);
+      return fail(400, { errors: error.response?.data });
     }
   },
 
