@@ -24,7 +24,7 @@ export const actions = {
     const formData = await prepareFormData(request);
     try {
       const record = await pb.collection("pgProperties").create(formData);
-      return { propertyCreated : 'your property details have been saved successfully you can veiw it once the verification is done'};
+      return { propertyCreated : 'your property details have been saved successfully you can veiw it once the verification of the property is done'};
     } catch (error) {
       console.error("Failed to create record:",error.response?.data);
       return fail(400, { errors: error.response?.data });
@@ -37,12 +37,10 @@ export const actions = {
     try {
       const record = await pb.collection("pgProperties").update(url.searchParams.get("recordId"), formData);
       console.log("Record updated:", record);
-      return record
-    } catch (err) {
-      console.error(
-        "Failed to update record:",
-        err.response?.data || err.message
-      );
+      return { propertyUpdated : 'your property details have been updated successfully'};
+    } catch (error) {
+      console.error("Failed to update record:",error.response?.data);
+      return fail(400, { errors: error.response?.data });
     }
     // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
     // redirect(303, `/pgProperty/${url.searchParams.get("recordId")}`);

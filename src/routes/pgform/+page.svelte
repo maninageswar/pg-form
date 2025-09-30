@@ -21,7 +21,7 @@
         if (form?.errors) handleErrors(form?.errors)
         if (form?.propertyCreated) {
             success(form?.propertyCreated)
-            // redirect to home page here
+            goto('/')
         }
         if (form?.propertyUpdated) {
             success(form?.propertyUpdated)
@@ -247,55 +247,37 @@
         return sorted1.every((val, i) => val === sorted2[i]);
     }
 
-    function handleUpdateSubmit(e) {
-        e.preventDefault();
-
-        const formData = new FormData(formElement);
-        
-        formData.delete("pgImages");
-        for(let i=0; i < imageFiles.length; i++) {
-            formData.append('pgImages',imageFiles[i])
-        }
-
-        // TODO:(learn how Form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
-        fetch(`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`, {
-        method: "POST",
-        body: formData
-        }).then((response) => { 
-             if (response.ok) {
-                success('your property details have been updated successfully')
-                goto(`/pgProperty/${pgFormPageData?.propertyData.id}`)
-             } else {
-                console.error('Failed to update property:', response);
-                failure('something went wrong while updating property')
-             }
-        });
+    const handleSubmit = ({ formData }) => {
+    formData.delete("pgImages");
+    for(let i=0; i < imageFiles.length; i++) {
+        formData.append('pgImages',imageFiles[i])
     }
-
-    // async function handleUpdateSubmit(e) {
-    //     e.preventDefault();
-    //     const formData = new FormData(formElement);
-    //     formData.delete("pgImages");
-    //     for(let i=0; i < imageFiles.length; i++) {
-    //         formData.append('pgImages',imageFiles[i])
-    //     }
-
-    //     // TODO:(learn how Form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
-    //     const response = await fetch(`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`, {
-    //                                 method: "POST",
-    //                                 body: formData
-    //                             })
-    //     const data = await response.json();
-    //     console.log('response from update api',data)
-    //     console.log('form',form);
-    // }
-
-
+    return async ({ result }) => {
+        console.log('result',result)
+        if (result.type === 'success') {
+            if (result.data?.propertyCreated) {
+                success(result.data?.propertyCreated)
+                goto('/')  
+            }
+            if (result.data?.propertyUpdated) {
+                success(result.data?.propertyUpdated);
+                goto(`/pgProperty/${pgFormPageData?.propertyData.id}`)
+            }
+        }
+        if (result.type === 'failure') {
+            handleErrors(result.data?.errors)
+        }
+    };
+  };
 
     function handleErrors(errors) {
         console.error('Form submission error:', errors);
         for (const key of Object.keys(errors)) {
-            failure(`${key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}: ${errors[key].message}`)
+            if (key === 'pgImages') {
+                failure(`${key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}: Failed to upload ${errors[key].params.file} - the maximum allowed file size is 5mb`)
+            } else {
+                failure(`${key.replace(/([a-z])([A-Z])/g, '$1 $2').toLowerCase()}: ${errors[key].message}`)
+            }
         }
     }
 
@@ -337,7 +319,7 @@
 {/snippet}
 
 
-<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance bind:this={formElement} enctype="multipart/form-data" oninput={checkFormDataInEditModeIsEqualToViewPageData}>
+<form class="flex-row justify-center" method="POST" action="?/createInventory" use:enhance={handleSubmit} bind:this={formElement} enctype="multipart/form-data" oninput={checkFormDataInEditModeIsEqualToViewPageData}>
 
     <!-- owner details -->
 
@@ -505,11 +487,10 @@
     {#if pgFormPageData?.propertyData}
     <!-- // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
         <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
-         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled" disabled={updateButtonDisabled} onclick={handleUpdateSubmit}>update property</button>
+         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled" disabled={updateButtonDisabled} formaction={`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`}>update property</button>
     {:else}
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
     {/if}
-
     
     <br>
     <br>
