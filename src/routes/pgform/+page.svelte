@@ -232,7 +232,7 @@
                         updateButtonDisabled = true;
                         continue
                     } else {
-                        updateButtonDisabled = false;
+        updateButtonDisabled = false;
                         break
                     }
                 }
@@ -286,7 +286,10 @@
 <!-- snippets -->
 {#snippet Input(required,name,type,label,bindValue='',placeholder='')}
     <label for={name}>{label}</label><span class="text-red-500 {!required ? 'hidden' : ''}">*</span>
-    <input {type} id={name} {name} {placeholder} value={bindValue} {required} class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+    <input {type} id={name} {name} {placeholder} value={bindValue} {required}
+        onwheel={(e) => e.target.blur()}
+        onkeydown={(e) => { if (type == 'number') preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}
+        class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
 {/snippet}
 
 {#snippet MyCheckbox({ value, label })}
@@ -349,13 +352,7 @@
         <Select items={states} required={true} name="pgState" placeholder='please select' value={pgFormPageData.propertyData?.pgState} on:change={checkFormDataInEditModeIsEqualToViewPageData}/>
     </div>
 
-    <!-- remove the below commented line if pgpincode is working fine -->
-    <!-- {@render Input(true, "pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)} -->
-
-    <label for="pgNoOfRoomsInEachFloor">pincode</label><span class="text-red-500">*</span>
-            <input type="number" id="pgPincode" name="pgPincode" required value={pgFormPageData.propertyData?.pgPincode}
-                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
-                class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+    {@render Input(true, "pgPincode", "number", "pincode", pgFormPageData.propertyData?.pgPincode)}
     
     {@render Input(true, "pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
 

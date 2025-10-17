@@ -14,7 +14,7 @@
 
 <style>
   :root {
-    --toastContainerLeft: calc(50vw - 11.5rem);
+    --toastContainerLeft: calc(50vw - 11rem);
 	--toastWidth: 22rem;
 	--toastBorderRadius: 0.375rem;
 	--toastBackground: #ffffffff;
