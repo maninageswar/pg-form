@@ -1,9 +1,8 @@
-import PocketBase from 'pocketbase';
+import { authPocketBaseInstanceWithPassword } from '$lib/server/pocketbase/pocketbase.js';
 
 export async function load({ params }) {
 
-    const pb = new PocketBase('http://127.0.0.1:8090');
-    await pb.admins.authWithPassword("testpocketbase@gmail.com","pocketbaseYouSavedMyDay");
+    const pb = await authPocketBaseInstanceWithPassword();
     try {
         const pgProperty = await pb.collection('pgProperties').getFirstListItem(`id="${params.id}"`)
         console.log('pgProperty',pgProperty)
@@ -17,3 +16,17 @@ export async function load({ params }) {
       );
     }
 }
+
+export const actions = {
+    deleteInventory: async ({ url }) => {
+        const propertyId = url.searchParams.get("recordId");
+        try {
+            const pb = await authPocketBaseInstanceWithPassword();
+            await pb.collection('pgProperties').delete(propertyId);
+            return { propertyDeleted : 'your property has been deleted successfully'};
+        } catch (error) {
+            console.error("Failed to delete record:",error.response?.data);
+            return fail(400, { errors: error.response?.data });
+        }
+    }
+};

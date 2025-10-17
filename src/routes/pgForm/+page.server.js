@@ -1,5 +1,5 @@
 import { fail, json } from '@sveltejs/kit';
-import { authPocketBaseInstanceWithPassword } from '$lib/pocketbase/pocketbase.js';
+import { authPocketBaseInstanceWithPassword } from '$lib/server/pocketbase/pocketbase.js';
 
 async function prepareFormData(request) {
   const formData = await request.formData();

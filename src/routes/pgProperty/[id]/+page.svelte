@@ -2,10 +2,11 @@
     import { PUBLIC_GOOGLE_MAP_API_KEY, PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
     import { goto } from "$app/navigation";
     import { page } from '$app/state';
+    import { enhance } from '$app/forms';
     import { onMount } from 'svelte';
     import * as gmapsLoader from '@googlemaps/js-api-loader';
     const { Loader } = gmapsLoader;
-    import { authPocketBaseInstanceWithPassword } from '$lib/pocketbase/pocketbase.js';
+    import { success } from '$lib/notification'
 
     let { data } = $props();
     let mapElement;
@@ -51,19 +52,24 @@
         });
     });
 
-    async function deleteProperty(propertyId) {
-        console.log('property id',propertyId);
-        const pb = await authPocketBaseInstanceWithPassword();
-        await pb.collection('pgProperties').delete(propertyId);
-        goto('/')
+    function handleDeleteProperty() {
+        return async ({ result }) => {
+            if (result.data?.propertyDeleted) {
+                success(result.data?.propertyDeleted)
+                goto('/')  
+            }
+        }
     }
 </script>
 
 <div class="flex items-center justify-between mb-5">
     <h2 class="font-Manrope">pg information</h2>
-    <button class="cursor-pointer bg-pg-red-button rounded-md p-1" onclick={() => deleteProperty(data.pgProperty.id)}>
-        <img src="/icons/delete.svg" alt="delete icon"/>
-    </button>
+    <form method="post" use:enhance={handleDeleteProperty}>
+        <button class="cursor-pointer bg-pg-red-button rounded-md p-1" onclick={() => deleteProperty(data.pgProperty.id)}
+            formaction={`?/deleteInventory&recordId=${data.pgProperty.id}`}>
+            <img src="/icons/delete.svg" alt="delete icon"/>
+        </button>
+    </form>
 </div>
 
 <div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
