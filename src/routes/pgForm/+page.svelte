@@ -14,20 +14,6 @@
     import { success, warning, failure } from '$lib/notification'
     import { preventKeyPress } from '$lib/utils/sharedlogic';
 
-    let { form } = $props();
-
-    $effect(()=>{
-        form;
-        if (form?.errors) handleErrors(form?.errors)
-        if (form?.propertyCreated) {
-            success(form?.propertyCreated)
-            goto('/')
-        }
-        if (form?.propertyUpdated) {
-            success(form?.propertyUpdated)
-        }  
-    })
-
     const pgType = ['gents', 'ladies', 'co-live'];
 
     const states = [
@@ -101,11 +87,10 @@
     onMount(async () => {
 		if (pgFormPageData?.propertyData) {
             const assignedRooms = pgFormPageData?.propertyData.sharing1Rooms?.concat(
-                                pgFormPageData?.propertyData.sharing2Rooms || [],
-                                pgFormPageData?.propertyData.sharing3Rooms || [],
-                                pgFormPageData?.propertyData.sharing4Rooms || [],
-                                pgFormPageData?.propertyData.sharing5Rooms || []
-                            ) || [];
+                                  pgFormPageData?.propertyData.sharing2Rooms || [],
+                                  pgFormPageData?.propertyData.sharing3Rooms || [],
+                                  pgFormPageData?.propertyData.sharing4Rooms || [],
+                                  pgFormPageData?.propertyData.sharing5Rooms || [] ) || [];
             calculateRoomNumbers()
             if (assignedRooms.length > 0) {
                 roomNumbers = roomNumbers.filter(room => !assignedRooms.includes(room));
@@ -484,9 +469,14 @@
     {#if pgFormPageData?.propertyData}
     <!-- // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
         <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
-         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled" disabled={updateButtonDisabled} formaction={`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`}>update property</button>
+        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled"
+            disabled={updateButtonDisabled}
+            formaction={`/pgForm?/updateInventory&recordId=${pgFormPageData?.propertyData.id}`}>
+            update property
+        </button>
     {:else}
-        <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer" type="submit">create property</button>
+        <!-- used class composition and applied pg-sky-button -->
+        <button class="w-full pg-sky-button mt-5" type="submit">create property</button>
     {/if}
     
     <br>

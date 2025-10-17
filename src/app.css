@@ -19,8 +19,8 @@
 class composition in tailwindcss which is nothing but combining multiple utility classes into a single class for reuse.
 use btn-primary class in your html element to apply these styles.
  */
-.btn-primary {
-  @apply px-4 py-2 bg-blue-500 text-white font-semibold rounded-lg shadow-md hover:bg-blue-600;
+.pg-sky-button {
+  @apply bg-pg-sky text-white px-4 py-2 rounded-md cursor-pointer disabled:cursor-not-allowed;
 }
 
 
