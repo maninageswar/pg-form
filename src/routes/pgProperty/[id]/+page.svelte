@@ -80,24 +80,24 @@
 </div>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">name</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgName}</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">name</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgName}</p>
 </div>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">type</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">pg for {data.pgProperty.pgType}</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">type</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">pg for {data.pgProperty.pgType}</p>
 </div>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">deposite amount</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">&#8377;{data.pgProperty.pgDepositAmount}</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">deposite amount</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">&#8377;{data.pgProperty.pgDepositAmount}</p>
 </div>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">location</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">location</p>
     <div class="flex items-center justify-between">
-        <p class="text-[#4b819b] text-sm font-normal basis-[90%] lowercase">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
+        <p class="text-pg-sky-text text-sm font-normal basis-[90%] lowercase">{data.pgProperty.pgAddress}, {data.pgProperty.pgLandmark}, {data.pgProperty.pgCity}, {data.pgProperty.pgState} {data.pgProperty.pgPincode}.</p>
         <img src="/icons/location.svg" alt="Location Icon" />
     </div>
 </div>
@@ -114,9 +114,9 @@
         <div class="p-4 flex flex-col justify-between">
             <img src="/icons/bed.svg" alt="bed icon" class="w-[45px] h-[45px]" />
             <div class="h-[55%]">
-                <h2 class="text-[#0d171c] text-base font-bold leading-tight mb-2">{roomType}</h2>
-                <p class="text-[#4b819b] text-sm font-normal leading-normal">&#8377;{data.pgProperty[`${roomType.replace(/\s+/g, '')}Rent`]}/month</p>
-                <p class="text-[#4b819b] text-sm font-normal leading-normal">5 rooms available</p>
+                <h2 class="text-base font-bold leading-tight mb-2">{roomType}</h2>
+                <p class="text-pg-sky-text text-sm font-normal leading-normal">&#8377;{data.pgProperty[`${roomType.replace(/\s+/g, '')}Rent`]}/month</p>
+                <p class="text-pg-sky-text text-sm font-normal leading-normal">5 rooms available</p>
             </div>
         </div>
     {/each}
@@ -128,7 +128,7 @@
     {#each data.pgProperty.pgAmenities as pgAmenities}
         <div class="p-2 flex items-center gap-1">
             <img src="/icons/{pgAmenities}.svg" alt="">
-            <p class="text-[#0d171c] text-sm font-normal leading-normal">{pgAmenitiesLabels[pgAmenities]}</p>
+            <p class="text-sm font-normal leading-normal">{pgAmenitiesLabels[pgAmenities]}</p>
         </div>
     {/each}
 </div>
@@ -136,19 +136,19 @@
 <h2 class="mt-5 mb-5 font-Manrope">owner details</h2>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">name</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerName}</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">name</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerName}</p>
 </div>
 
 <div class="mt-3">
-    <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">number</p>
-    <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerNumber}</p>
+    <p class="text-base font-medium leading-normal line-clamp-1">number</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerNumber}</p>
 </div>
 
 {#if data.pgProperty.ownerEmail}
     <div class="mt-3">
-        <p class="text-[#0d171c] text-base font-medium leading-normal line-clamp-1">email</p>
-        <p class="text-[#4b819b] text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerEmail}</p>
+        <p class="text-base font-medium leading-normal line-clamp-1">email</p>
+        <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.ownerEmail}</p>
     </div>
 {/if}
 

@@ -1,4 +1,4 @@
-import { fail, json } from '@sveltejs/kit';
+import { fail } from '@sveltejs/kit';
 import { authPocketBaseInstanceWithPassword } from '$lib/server/pocketbase/pocketbase.js';
 
 async function prepareFormData(request) {
