@@ -22,7 +22,7 @@ class composition in tailwindcss which is nothing but combining multiple utility
 use btn-primary class in your html element to apply these styles.
  */
 .pg-sky-button {
-  @apply bg-pg-sky text-white px-4 py-2 rounded-md cursor-pointer disabled:cursor-not-allowed;
+  @apply bg-pg-sky text-white px-4 py-2 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled;
 }
 
 
