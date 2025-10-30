@@ -11,6 +11,13 @@
     let isUpdateProfileButtonDisabled = $state(true);
     let formElement;
 
+    let formHasErrors = $derived.by(() => {
+        if (editingProfile) {
+            return Object.keys(formErrors).length > 0;
+        }
+        return false;
+    });
+
     function handleSubmit() {
         return async ({ result }) => {
             console.log('form submit result', result);
@@ -113,7 +120,7 @@
     
     <button class="mt-5 pg-sky-button w-full flex items-center justify-center gap-1 cursor-pointer"
         type={!editingProfile ? "notbutton" : "button"}
-        disabled={editingProfile && isUpdateProfileButtonDisabled}
+        disabled={editingProfile && isUpdateProfileButtonDisabled || formHasErrors}
         onclick={() => {
             editingProfile = !editingProfile
             tick().then(() => {userName?.focus()});
