@@ -71,52 +71,49 @@
 
 <form method="POST" action="?/updateUserProfile" use:enhance={handleSubmit} bind:this={formElement} enctype="multipart/form-data" oninput={isProfileEdited}>
 
-    <div class="flex flex-col items-center p-5 mb-4">
-        <img src="/images/pgProfile.png" alt="" class="border border-pg-sky rounded-full shadow-xl w-[160px] h-[160px] mb-6"/>
-        <h3 class="font-Manrope text-pg-sky-text">{data.userProfile.name}</h3>
+    <div class="flex flex-col items-center p-5">
+        <img src="/images/pgProfile.png" alt="" class="border border-pg-sky rounded-full shadow-xl w-[150px] h-[150px] mb-4"/>
     </div>
 
-    <hr class="border border-pg-sky-light mb-10">
-
-    <div class="border-3 border-pg-sky-light {editingProfile ? "has-[:focus]:border-pg-sky" : "shadow-xl"} rounded-full h-16 mb-8 flex items-center px-6 relative">
-        <label for="name" class="absolute bottom-12 bg-white text-xl">name<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
+    <div class="border-3 border-pg-sky-light {editingProfile ? "has-[:focus]:border-pg-sky" : "shadow-md"} rounded-full h-16 mb-6 flex items-center px-6 relative">
+        <label for="name" class="absolute bottom-12 text-xl">name<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0"
             readonly={!editingProfile} name="name" bind:this={userName} value={data.userProfile.name} type="text">
     </div>
 
     <div class="border-3 border-pg-sky-light
         {editingProfile ? (formErrors?.email ? "has-[:focus]:border-pg-red-button" : "has-[:focus]:border-pg-sky") : "shadow-xl"}
-        rounded-full h-16 {formErrors?.email ? "mb-1" : "mb-8"} flex items-center px-6 relative">
-        <label for="email" class="absolute bottom-12 bg-white text-xl">email<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
+        rounded-full h-16 {formErrors?.email ? "mb-1" : "mb-6"} flex items-center px-6 relative">
+        <label for="email" class="absolute bottom-12 text-xl">email<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0"
             readonly={!editingProfile} name="email" value={data.userProfile.email} type="email"
             oninput={validateEmail}>
     </div>
-    <span class="text-pg-red text-sm {formErrors?.email ? "mb-10" : "hidden"} px-6">{formErrors?.email}</span>
+    <span class="text-pg-red text-sm {formErrors?.email ? "mb-8" : "hidden"} px-6">{formErrors?.email}</span>
     
     <div class="border-3 border-pg-sky-light {formErrors?.email ? "mt-4" : ""}
         {editingProfile ? (formErrors?.number ? "has-[:focus]:border-pg-red-button" : "has-[:focus]:border-pg-sky") : "shadow-xl"}
-        rounded-full h-16 {formErrors?.number ? "mb-1" : "mb-8"} flex items-center px-6 relative">
-        <label for="number" class="absolute bottom-12 bg-white text-xl">mobile no.<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
+        rounded-full h-16 {formErrors?.number ? "mb-1" : "mb-6"} flex items-center px-6 relative">
+        <label for="number" class="absolute bottom-12 text-xl">mobile no<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0" 
             readonly={!editingProfile} name="number" value={data.userProfile.number} type="number"
             oninput={validateMobileNumber}
             onwheel={(e) => e.target.blur()}
             onkeydown={(e) => { preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}>
     </div>
-    <span class="text-pg-red text-sm {formErrors?.number ? "mb-10" : "hidden"} px-6">{formErrors?.number}</span>
+    <span class="text-pg-red text-sm {formErrors?.number ? "mb-8" : "hidden"} px-6">{formErrors?.number}</span>
 
     <div class="border-3 border-pg-sky-light {formErrors?.number ? "mt-4" : ""}
         {editingProfile ? (formErrors?.emergencyContact ? "has-[:focus]:border-pg-red-button" : "has-[:focus]:border-pg-sky") : "shadow-xl"}
-        rounded-full h-16 {formErrors?.emergencyContact ? "mb-1" : "mb-8"} flex items-center px-6 relative">
-        <label for="emergencyContact" class="absolute bottom-12 bg-white text-xl">emergency contact no.<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
+        rounded-full h-16 {formErrors?.emergencyContact ? "mb-1" : "mb-6"} flex items-center px-6 relative">
+        <label for="emergencyContact" class="absolute bottom-12 text-xl">emergency contact no<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0"
             readonly={!editingProfile} name="emergencyContact" value={data.userProfile.emergencyContact} type="number"
             oninput={validateMobileNumber}
             onwheel={(e) => e.target.blur()}
             onkeydown={(e) => { preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}>
     </div>
-    <span class="text-pg-red text-sm {formErrors?.emergencyContact ? "mb-8" : "hidden"} px-6">{formErrors?.emergencyContact}</span>
+    <span class="text-pg-red text-sm {formErrors?.emergencyContact ? "mb-6" : "hidden"} px-6">{formErrors?.emergencyContact}</span>
     
     <button class="mt-5 pg-sky-button w-full flex items-center justify-center gap-1 cursor-pointer"
         type={!editingProfile ? "notbutton" : "button"}
@@ -129,3 +126,10 @@
         <img src="/icons/edit.svg" class="{editingProfile ? "hidden" : ""}" alt="edit Icon"/>
     </button>
 </form>
+
+<style>
+    label {
+        background: #FFFFFF;
+        background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 1) 100%);
+    }
+</style>

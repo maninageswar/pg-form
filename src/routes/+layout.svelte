@@ -9,10 +9,15 @@
 
 <SvelteToast options={{ reversed: false, intro: { y: -200 } }}/>
 
-<div class="px-5 pt-10">
+<div class="px-4 pt-4">
 	{@render children()}
 </div>
-<footer class="fixed bottom-0 w-full max-w-[390px] bg-white flex py-3 justify-around align-items-center shadow-[0_-4px_6px_rgba(0,0,0,0.1)]">
+
+<br>
+<br>
+<br>
+
+<footer class="max-w-[450px] fixed bottom-0 w-full bg-white flex py-3 justify-around align-items-center shadow-[0_-4px_6px_rgba(0,0,0,0.1)]">
 	<a href="/" ><img src={`/icons/home${page.url.pathname === '/' ? 'Filled' : 'Line'}.svg`} alt="home icon"/></a>
 	<a href="/userInventory"><img src={`/icons/building${page.url.pathname === '/userInventory' ? 'Filled' : 'Line'}.svg`} alt="building icon"/></a>
 	<a href="/userProfile"><img src={`/icons/userProfile${page.url.pathname === '/userProfile' ? 'Filled' : 'Line'}.svg`} alt="profile icon"/></a>

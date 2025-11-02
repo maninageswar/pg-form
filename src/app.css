@@ -29,6 +29,10 @@ use btn-primary class in your html element to apply these styles.
 
 body {
   font-family: 'Poppins', sans-serif;
+  max-width: 450px;
+  min-height: 100vh;
+  box-sizing: border-box;
+  margin: 0px auto
 }
 
 @layer base {

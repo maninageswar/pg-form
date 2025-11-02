@@ -72,7 +72,7 @@
     </form>
 </div>
 
-<div class="w-[348px] h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
+<div class="w-full h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:mr-3 mb-5 *:shadow-xl">
     {#each data.pgProperty.pgImages as pgImage}
         <div class="w-[85%] h-[176px] border border-pg-sky inline-block"><img class="w-full h-full object-cover" src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}" alt="pg-image"></div>
@@ -163,10 +163,6 @@
 {:else}
     <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer">book rooms</button>
 {/if}
-
-<br>
-<br>
-<br>
 
 <style>
     :global(#map > div:first-child + div) {

@@ -478,28 +478,6 @@
         <!-- used class composition and applied pg-sky-button -->
         <button class="w-full pg-sky-button mt-5" type="submit">create property</button>
     {/if}
-    
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
-    <br>
 </form>
 
 <style>
