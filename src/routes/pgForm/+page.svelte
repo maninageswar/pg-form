@@ -540,4 +540,8 @@
     :global(.multiselect .remove):hover {
         background: none !important;
     }
+
+    :global(div.multiselect input):focus {
+        --tw-ring-color: none !important;
+    }
 </style>
