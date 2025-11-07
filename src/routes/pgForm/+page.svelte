@@ -274,7 +274,7 @@
     <input {type} id={name} {name} {placeholder} value={bindValue} {required}
         onwheel={(e) => e.target.blur()}
         onkeydown={(e) => { if (type == 'number') preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}
-        class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
+        class="w-full mt-1 mb-4 border border-pg-sky rounded-md"/>
 {/snippet}
 
 {#snippet MyCheckbox({ value, label })}

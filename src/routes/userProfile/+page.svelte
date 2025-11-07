@@ -96,7 +96,7 @@
         rounded-full h-16 {formErrors?.number ? "mb-1" : "mb-6"} flex items-center px-6 relative">
         <label for="number" class="absolute bottom-12 text-xl">mobile no<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0" 
-            readonly={!editingProfile} name="number" value={data.userProfile.number} type="number"
+            readonly={!editingProfile} name="number" value={data.userProfile.mobileNumber} type="number"
             oninput={validateMobileNumber}
             onwheel={(e) => e.target.blur()}
             onkeydown={(e) => { preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}>
@@ -108,7 +108,7 @@
         rounded-full h-16 {formErrors?.emergencyContact ? "mb-1" : "mb-6"} flex items-center px-6 relative">
         <label for="emergencyContact" class="absolute bottom-12 text-xl">emergency contact no<span class="text-red-500 {!editingProfile ? 'hidden' : ''}">*</span></label>
         <input class="w-full font-Manrope text-pg-sky-text text-lg border-none focus:ring-0 p-0"
-            readonly={!editingProfile} name="emergencyContact" value={data.userProfile.emergencyContact} type="number"
+            readonly={!editingProfile} name="emergencyContact" value={data.userProfile.emergencyContactNumber} type="number"
             oninput={validateMobileNumber}
             onwheel={(e) => e.target.blur()}
             onkeydown={(e) => { preventKeyPress(e, ['e', ' ', '+', '-', '.'])}}>
