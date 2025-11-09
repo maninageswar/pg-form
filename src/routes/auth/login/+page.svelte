@@ -67,5 +67,3 @@
     don't have an account?
     <a class="font-bold text-pg-sky underline" href="/auth/signUp">sign up</a>
 </p>
-
-<button class="pg-sky-button" onclick={()=>{success('testing the color or success notification')}}>test</button>
