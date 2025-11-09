@@ -11,7 +11,7 @@
     import { PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
     import { redirect } from '@sveltejs/kit';
     import { goto } from "$app/navigation";
-    import { success, warning, failure } from '$lib/notification'
+    import { success, failure } from '$lib/notification';
     import { preventKeyPress } from '$lib/utils/sharedlogic';
 
     const pgType = ['gents', 'ladies', 'co-live'];
@@ -250,7 +250,7 @@
             }
         }
         if (result.type === 'failure') {
-            handleErrors(result.data?.errors)
+            handleErrors(result.data?.errors || result.data);
         }
     };
   };

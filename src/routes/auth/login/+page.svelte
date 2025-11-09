@@ -1,9 +1,20 @@
 <script>
-    let showPassword = false;
+    import { success, failure } from '$lib/notification';
+
+    let { data, form } = $props();
+
+    let showPassword = $state(false);
     
     function togglePassword() {
         showPassword = !showPassword;
     }
+
+    $effect(()=>{
+        if (data?.accountCreated) {
+            success('your account has been created successfully. please login to continue');
+        }
+    })
+
 </script>
 
 <div class="flex flex-col justify-center items-center mb-5">
@@ -11,10 +22,10 @@
     <h2 class="font-Manrope text-center font-bold text-[28px]">home is just a click away let's get you there</h2>
 </div>
 
-<label for="email">email</label>
+<label for="email">email<span class="text-red-500">*</span></label>
 <input class="w-full mt-1 mb-4 border border-pg-sky rounded-md" name="email" id="email" type="email" placeholder="enter your email">
 
-<label for="password">password</label>
+<label for="password">password<span class="text-red-500">*</span></label>
 <div class="relative">
     <input 
         class="w-full mt-1 mb-4 border border-pg-sky rounded-md pr-10" 
@@ -28,7 +39,7 @@
         class="absolute right-3 top-1/4" 
         onclick={()=>togglePassword()}
     >
-        {#if showPassword}
+        {#if !showPassword}
             <img src="/icons/eyeOff.svg" class="w-5 h-5" alt="hide password">
         {:else}
             <img src="/icons/eye.svg" class="w-5 h-5" alt="show password">
@@ -56,3 +67,5 @@
     don't have an account?
     <a class="font-bold text-pg-sky underline" href="/auth/signUp">sign up</a>
 </p>
+
+<button class="pg-sky-button" onclick={()=>{success('testing the color or success notification')}}>test</button>

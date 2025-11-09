@@ -18,14 +18,12 @@
 }
 
 /* 
-class composition in tailwindcss which is nothing but combining multiple utility classes into a single class for reuse.
-use btn-primary class in your html element to apply these styles.
+class composition in tailwindcss which is nothing but combining multiple utility classes into a 
+single class for reuse. use btn-primary class in your html element to apply these styles.
  */
 .pg-sky-button {
   @apply bg-pg-sky text-white px-4 py-2 rounded-md cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled;
 }
-
-
 
 body {
   font-family: 'Poppins', sans-serif;
@@ -42,5 +40,11 @@ body {
 
   h2 {
      @apply text-2xl font-semibold;
+  }
+
+  input, textarea, select {
+    &:focus {
+      --tw-ring-color: #0ea5e9e6 !important;
+    }
   }
 }

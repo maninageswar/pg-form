@@ -1,7 +1,7 @@
 <script>
     import { tick } from 'svelte';
     import { enhance } from '$app/forms';
-    import { success, warning, failure } from '$lib/notification';
+    import { success, failure } from '$lib/notification';
     import { preventKeyPress } from '$lib/utils/sharedlogic';
 
     let { data } = $props();
