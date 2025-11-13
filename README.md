@@ -1,4 +1,4 @@
-# how to setup this project in your local
+# how to setup this project in your local (outdated need to update the steps)
 
 ## prerequisites
 
