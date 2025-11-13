@@ -64,7 +64,7 @@
 
 <div class="flex items-center justify-between mb-5">
     <h2 class="font-Manrope">pg information</h2>
-    <form method="post" use:enhance={handleDeleteProperty}>
+    <form method="POST" use:enhance={handleDeleteProperty}>
         <button class="cursor-pointer bg-pg-red-button rounded-md p-1" onclick={() => deleteProperty(data.pgProperty.id)}
             formaction={`?/deleteInventory&recordId=${data.pgProperty.id}`}>
             <img src="/icons/delete.svg" alt="delete icon"/>

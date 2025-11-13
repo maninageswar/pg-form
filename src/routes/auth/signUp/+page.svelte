@@ -38,6 +38,9 @@
 </div>
 
 <form action="?/register" method="POST" use:enhance>
+    <label for="name">name<span class="text-red-500">*</span></label>
+    <input class="w-full mt-1 mb-4 border border-pg-sky rounded-md" value={form?.name} name="name" type="text" placeholder="enter your name" required>
+
     <label for="email">email<span class="text-red-500">*</span></label>
     <input class="w-full mt-1 mb-4 border border-pg-sky rounded-md" value={form?.email} name="email" type="email" placeholder="enter your email" required>
 
@@ -54,8 +57,7 @@
         <button 
             type="button"
             class="absolute right-3 top-1/4" 
-            onclick={()=>togglePassword()}
-        >
+            onclick={()=>togglePassword()}>
             {#if !showPassword}
                 <img src="/icons/eyeOff.svg" class="w-5 h-5" alt="hide password">
             {:else}

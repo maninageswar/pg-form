@@ -15,3 +15,5 @@ export async function load({ params }) {
       );
     }
 }
+
+export const ssr = false
