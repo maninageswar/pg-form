@@ -1,4 +1,5 @@
 <script>
+    import { PUBLIC_POCKETBASE_REST_API } from '$env/static/public';
     import { tick } from 'svelte';
     import { enhance } from '$app/forms';
     import { success, failure } from '$lib/notification';
@@ -104,7 +105,8 @@
 <form method="POST" action="?/updateUserProfile" use:enhance={handleSubmit} bind:this={formElement} enctype="multipart/form-data" oninput={isProfileEdited}>
 
     <div class="flex flex-col items-center p-5">
-        <img src="/images/pgProfile.png" alt="" class="border border-pg-sky rounded-full shadow-xl w-[150px] h-[150px] mb-4"/>
+        <img src={ data.userProfile.avatar ? `${PUBLIC_POCKETBASE_REST_API}/files/${data.userProfile.collectionId}/${data.userProfile.id}/${data.userProfile.avatar}` : "/images/pgProfile.png"}
+            alt="" class="border border-pg-sky rounded-full shadow-xl w-[150px] h-[150px] mb-4"/>
     </div>
 
     <div class="border-3 border-pg-sky-light {editingProfile ? "has-[:focus]:border-pg-sky" : "shadow-md"} rounded-full h-16 mb-6 flex items-center px-6 relative">

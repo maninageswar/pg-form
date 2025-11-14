@@ -19,7 +19,7 @@ export const handle = async ({ event, resolve }) => {
     // Expose the logged-in user for server-side rendering
     event.locals.user = event.locals.pb.authStore.model;
     const response = await resolve(event);
-    response.headers.set('set-cookie', event.locals.pb.authStore.exportToCookie({ httpOnly: false }));
+    response.headers.append('set-cookie', event.locals.pb.authStore.exportToCookie({ httpOnly: false }));
 
     return response;
 };

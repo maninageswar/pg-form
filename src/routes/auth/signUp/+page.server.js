@@ -26,5 +26,16 @@ export const actions = {
         // it is important to use which code you use the info is avaliable in https://svelte.dev/docs/kit/@sveltejs-kit#redirect
 
         throw redirect(303, '/auth/login?accountCreated=true');
+    },
+
+    continueWithGoogle: async ({ locals, url, cookies }) => {
+       const redirectUrl = `${url.origin}/api/oauth/google/callback`;
+       const methods = await locals.pb.collection('users').listAuthMethods();
+       const google = methods.oauth2.providers.find((p) => p.name === 'google');
+       if (!google) {
+           return fail(400, { error: 'google oauth not configured' });
+       }
+       cookies.set('provider', JSON.stringify(google), { httpOnly : true, path : '/api/oauth/google/callback'})
+       throw redirect(303, `${google.authUrl}${encodeURIComponent(redirectUrl)}`);
     }
 };

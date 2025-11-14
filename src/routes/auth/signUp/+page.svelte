@@ -1,6 +1,7 @@
 <script>
     import { enhance } from '$app/forms';
     import { success, failure } from '$lib/notification';
+    import { page } from '$app/stores';
 
     let { form } = $props();
 
@@ -11,11 +12,17 @@
     }
 
     $effect(()=>{
-        if (form?.error && form?.errorResponse.data) {
-            handleErrors(form?.errorResponse.data?.errors || form?.errorResponse.data);
+        if (form?.error && form?.errorResponse?.data) {
+            handleErrors(form?.errorResponse?.data?.errors || form?.errorResponse?.data);
             // here in the above line i have used logical or || because i have observed that
             // pocketbase is throwing multiple errors in errors under data prop if there is 
             // single error it is throwing in data prop to handle both cased i used ||
+        } 
+        if (form?.error) {
+            failure(form?.error);
+        }
+        if ($page.url.searchParams.get('oauthError')) {
+            failure('oauth error: unable to continue with google. please try again');
         }
     })
 
@@ -84,7 +91,9 @@
         <p class="text-pg-sky-button-disabled">or</p>
         <hr class="flex-1 border-t border-pg-sky-button-disabled"/>
     </div>
+</form>
 
+<form action="?/continueWithGoogle" method="POST" use:enhance>
     <button class="border border-pg-sky px-4 py-2 text-pg-sky rounded-md w-full flex justify-center items-center">
         <img src="/icons/google.svg" class="w-5 h-5 mr-3" alt="">
         <p class="text-transparent bg-clip-text bg-[linear-gradient(to_right,#4285F4_0%,#EA4335_25%,#FBBC05_50%,#34A853_75%,#4285F4_100%)] cursor-pointer">
