@@ -22,6 +22,9 @@ export const actions = {
   createInventory: async ({ request }) => {
     const pb = await authPocketBaseInstanceWithPassword();
     const formData = await prepareFormData(request);
+    if (formData.get('pgRefundableDeposit') > formData.get('pgDepositAmount')) {
+      return fail(400, { errors: { pgRefundableDeposit : { message : "refundable amount cannot be greater than deposite" }}});
+    }
     try {
       const record = await pb.collection("pgProperties").create(formData);
       return { propertyCreated : 'your property details have been saved successfully you can veiw it once the verification of the property is done'};
@@ -34,6 +37,9 @@ export const actions = {
   updateInventory: async ({ request, url }) => {
     const pb = await authPocketBaseInstanceWithPassword();
     const formData = await prepareFormData(request);
+    if (formData.get('pgRefundableDeposit') > formData.get('pgDepositAmount')) {
+      return fail(400, { errors: { pgRefundableDeposit : { message : "refundable amount cannot be greater than deposite" }}});
+    }
     try {
       const record = await pb.collection("pgProperties").update(url.searchParams.get("recordId"), formData);
       console.log("Record updated:", record);
@@ -42,8 +48,6 @@ export const actions = {
       console.error("Failed to update record:",error.response?.data);
       return fail(400, { errors: error.response?.data });
     }
-    // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder
-    // redirect(303, `/pgProperty/${url.searchParams.get("recordId")}`);
   }
 };
 

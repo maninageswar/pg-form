@@ -59,6 +59,8 @@
 
     let noOfFloors = $state();
     let noOfRoomsInEachFloor = $state();
+    let depositeAmount = $state(0);
+    let refundableDepositeAmount = $state(0);
     let selectedRoomTypes = $state([]);
     let roomNumbers = $state([]);
     let imageFiles = $state([]);
@@ -73,6 +75,8 @@
     selectedRoomTypes = pgFormPageData.propertyData?.pgRoomTypes || [];
     noOfFloors = pgFormPageData.propertyData?.pgNoOfFloors || "";
     noOfRoomsInEachFloor = pgFormPageData.propertyData?.pgNoOfRoomsInEachFloor || "";
+    depositeAmount = pgFormPageData.propertyData?.pgDepositAmount || 0;
+    refundableDepositeAmount = pgFormPageData.propertyData?.pgRefundableDeposit || 0;
     pgAmenitiesValues = pgFormPageData.propertyData?.pgAmenities || [];
 
     let updateButtonDisabled = $state(true);
@@ -341,7 +345,26 @@
     
     {@render Input(true, "pgLocation", "url", "location", pgFormPageData.propertyData?.pgLocation, "please provide the location link")}
 
-    {@render Input(true, "pgDepositAmount", "number", "deposite amount", pgFormPageData.propertyData?.pgDepositAmount)}
+    <div class="flex gap-4 mt-1 {refundableDepositeAmount > depositeAmount ? "mb-2" : "mb-4"}">
+        <div>
+            <label for="pgDepositAmount">deposite amount</label><span class="text-red-500">*</span>
+            <input type="number" id="pgDepositAmount" name="pgDepositAmount" bind:value={depositeAmount} required 
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                onwheel={(e) => e.target.blur()}
+                class="w-full border border-pg-sky rounded-md focus:border-pg-sky"/>
+        </div>
+        
+        <div>
+            <label for="pgRefundableDeposit">refundable deposite</label><span class="text-red-500">*</span>
+            <input type="number" id="pgRefundableDeposit" name="pgRefundableDeposit" bind:value={refundableDepositeAmount} required 
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                onwheel={(e) => e.target.blur()}
+                class="w-full border {refundableDepositeAmount > depositeAmount ? "border-pg-red" : "border-pg-sky"} rounded-md"/>
+                <!-- TO CHECK: check when we add "border-pg-red" still some pg-sky border is visible this is because of ring on focus
+                 that is appllied accross the appllication check how to prevent it  -->
+        </div>
+    </div>
+    <div class="text-pg-red text-sm {refundableDepositeAmount > depositeAmount  ? "mb-4" : "hidden"}">refundable amount cannot be greater than deposite</div>
 
     <label for="pgType">pg type</label><span class="text-red-500">*</span>
     <div class="mt-1 mb-4">
@@ -381,7 +404,6 @@
                 onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
                 class="w-full mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"/>
         </div>
-        
     </div>
 
     {#if noOfFloors && noOfRoomsInEachFloor && selectedRoomTypes.length > 0}

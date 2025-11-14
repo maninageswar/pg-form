@@ -91,7 +91,7 @@
 
 <div class="mt-3">
     <p class="text-base font-medium leading-normal line-clamp-1">deposite amount</p>
-    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">&#8377;{data.pgProperty.pgDepositAmount}</p>
+    <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">&#8377;{data.pgProperty.pgDepositAmount} <span class="italic">( &#8377;{data.pgProperty.pgRefundableDeposit} refundable )</span></p>
 </div>
 
 <div class="mt-3">
