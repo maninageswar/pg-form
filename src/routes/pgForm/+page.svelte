@@ -381,11 +381,18 @@
 
      {#each selectedRoomTypes as selectedRoomType }
         <div class="flex gap-3 justify-around items-baseline">
-            <div><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType} rent</label><span class="text-red-500">*</span></div><span>:</span>
+            <div class="basis-1/3"><label for={selectedRoomType.replace(" ", "-")}>{selectedRoomType}</label><span class="text-red-500">*</span></div><span>:</span>
             <input type="number" id={selectedRoomType} name="{`${selectedRoomType.replace(" ", "")}Rent`}" 
                 onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
                 value={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}Rent`] : "" } 
                 class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"
+                placeholder="monthly rent"
+                required/>
+            <input type="number" name="{`${selectedRoomType.replace(" ", "")}PerDayRent`}" 
+                onkeydown={(e) => preventKeyPress(e, ['e', ' ', '+', '-', '.'])}
+                value={pgFormPageData?.propertyData ? pgFormPageData?.propertyData[`${selectedRoomType.replace(" ", "")}PerDayRent`] : "" } 
+                class="w-2/4 mt-1 mb-4 border border-pg-sky rounded-md focus:border-pg-sky"
+                placeholder="perday rent"
                 required/>
         </div>
      {/each}
@@ -489,7 +496,7 @@
     </div>    
     
     {#if pgFormPageData?.propertyData}
-    <!-- // TODO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
+    <!-- // TO DO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
         <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled"
             disabled={updateButtonDisabled}
@@ -501,6 +508,33 @@
         <button class="w-full pg-sky-button mt-5" type="submit">create property</button>
     {/if}
 </form>
+
+<!-- <table>
+    <thead>
+        <tr>
+            <th>sharing</th>
+            <th>rent</th>
+            <th>perday stay rent</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>1</td>
+            <td>12000</td>
+            <td>500</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>10000</td>
+            <td>400</td>
+        </tr>
+        <tr>
+            <td>3</td>
+            <td>8000</td>
+            <td>300</td>
+        </tr>
+    </tbody>
+</table> -->
 
 <style>
     :global(div.multiselect) {

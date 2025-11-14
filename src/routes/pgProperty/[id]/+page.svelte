@@ -111,12 +111,14 @@
 
 <div class="mt-3 grid grid-cols-2 gap-3 *:border *:border-pg-sky *:h-[170px] *:rounded-xl *:shadow-sm">
     {#each data.pgProperty.pgRoomTypes as roomType}
-        <div class="p-4 flex flex-col justify-between">
-            <img src="/icons/bed.svg" alt="bed icon" class="w-[45px] h-[45px]" />
-            <div class="h-[55%]">
-                <h2 class="text-base font-bold leading-tight mb-2">{roomType}</h2>
+        <div class="p-4">
+            <img src="/icons/bed.svg" alt="bed icon" class="w-[45px] h-[45px] mb-3" />
+            <div class="flex flex-col justify-between h-[55%]">
+                 <h2 class="text-base font-bold leading-tight ">{roomType}</h2>
                 <p class="text-pg-sky-text text-sm font-normal leading-normal">&#8377;{data.pgProperty[`${roomType.replace(/\s+/g, '')}Rent`]}/month</p>
-                <p class="text-pg-sky-text text-sm font-normal leading-normal">5 rooms available</p>
+                <p class="text-pg-sky-text text-sm font-normal leading-normal">&#8377;{data.pgProperty[`${roomType.replace(/\s+/g, '')}PerDayRent`]}/day <span class="italic">(for days stay)</span></p>
+                <!-- TO DO: try to implement the logic for the below field to display  -->
+                <!-- <p class="text-pg-sky-text text-sm font-normal leading-normal">5 rooms available</p> -->
             </div>
         </div>
     {/each}
@@ -152,7 +154,7 @@
     </div>
 {/if}
 
-<!-- TODO: need to check if the user logged is the ower of currently showing pg property then we need show the contents-->
+<!-- T ODO: need to check if the user logged is the ower of currently showing pg property then we need show the contents-->
 {#if true} 
     <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full flex items-center justify-center gap-1 cursor-pointer"
         onclick={() => goto("/pgForm", {state: {propertyData: data.pgProperty}})}
