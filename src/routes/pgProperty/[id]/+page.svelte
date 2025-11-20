@@ -72,11 +72,17 @@
     </form>
 </div>
 
-<div class="w-full h-[176px] overflow-x-auto whitespace-nowrap scroll-smooth snap-x snap-mandatory 
-[&::-webkit-scrollbar]:hidden [-ms-overflow-style:'none'] [scrollbar-width:'none'] *:mr-3 mb-5 *:shadow-xl">
+<div class="relative w-full">
+  <div class="flex gap-4 overflow-x-auto scroll-smooth py-2 no-scrollbar">
     {#each data.pgProperty.pgImages as pgImage}
-        <div class="w-[85%] h-[176px] border border-pg-sky inline-block"><img class="w-full h-full object-cover" src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}" alt="pg-image"></div>
+      <div class="w-[85%] h-[176px] rounded-md overflow-hidden bg-gray-800 flex-shrink-0 shadow-md">
+        <img src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}"
+          alt="pg-image"
+          class="w-full h-full object-cover"
+        />
+      </div>
     {/each}
+  </div>
 </div>
 
 <div class="mt-3">
@@ -169,5 +175,13 @@
 <style>
     :global(#map > div:first-child + div) {
         display: none !important;
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+        display: none;
+    }
+
+    .no-scrollbar {
+        scrollbar-width: none;
     }
 </style>

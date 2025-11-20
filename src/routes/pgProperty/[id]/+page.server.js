@@ -30,3 +30,7 @@ export const actions = {
         }
     }
 };
+
+// TO LEARN : if you remove the below line, then when you do a refresh on already loaded property 
+// display page, it is throwing 500 error.
+export const ssr = false
