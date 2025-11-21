@@ -10,6 +10,7 @@
 
     let { data } = $props();
     let mapElement;
+    let row;
     console.log('data.pgProperty',data.pgProperty)
 
     const pgAmenitiesLabels = {
@@ -60,6 +61,14 @@
             }
         }
     }
+
+    function scrollLeft() {
+        row.scrollBy({ left: -370, behavior: "smooth" });
+    }
+
+    function scrollRight() {
+        row.scrollBy({ left: 370, behavior: "smooth" });
+    }
 </script>
 
 <div class="flex items-center justify-between mb-5">
@@ -73,19 +82,25 @@
 </div>
 
 <div class="relative w-full">
-  <div class="flex gap-4 overflow-x-auto scroll-smooth py-2 no-scrollbar">
-    {#each data.pgProperty.pgImages as pgImage}
-      <div class="w-[85%] h-[176px] rounded-md overflow-hidden bg-gray-800 flex-shrink-0 shadow-md">
-        <img src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}"
-          alt="pg-image"
-          class="w-full h-full object-cover"
-        />
-      </div>
-    {/each}
-  </div>
+    <div class="flex gap-4 overflow-x-auto scroll-smooth py-2 no-scrollbar" bind:this={row}>
+        {#each data.pgProperty.pgImages as pgImage}
+        <div class="w-[85%] h-[176px] rounded-md overflow-hidden bg-gray-800 flex-shrink-0 shadow-md">
+            <img src="{PUBLIC_POCKETBASE_REST_API}/files/{data.pgProperty.collectionId}/{data.pgProperty.id}/{pgImage}" 
+                alt="pg" class="w-full h-full object-cover"/>
+        </div>
+        {/each}
+    </div>
+
+    {#if window.innerWidth > 1024}
+        <div class="flex justify-end">
+            <button onclick={scrollLeft}><img src="/icons/leftArrow.svg" alt="left-arrow"></button>
+            <button onclick={scrollRight}><img src="/icons/rightArrow.svg" alt="right-arrow"></button>
+        </div>
+    {/if}
 </div>
 
-<div class="mt-3">
+
+<div class={window.innerWidth < 1024 ? "mt-3" : ""}>
     <p class="text-base font-medium leading-normal line-clamp-1">name</p>
     <p class="text-pg-sky-text text-sm font-normal leading-normal line-clamp-2">{data.pgProperty.pgName}</p>
 </div>

@@ -496,7 +496,7 @@
     </div>    
     
     {#if pgFormPageData?.propertyData}
-    <!-- // TO DO:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
+    <!-- // TO LEARN:(learn how form submit works) check how to use redirect and also see why redirect is working if we use formaction in update button  but redirect is not working if we use fetch that is called from handleUpdateSubmit in +page.svelte of this folder -->
         <!-- <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-sky-300" formaction="?/updateInventory&recordId={pgFormPageData?.propertyData.id}">update property</button> -->
         <button class="mt-5 bg-pg-sky text-white px-4 py-2 rounded-md w-full cursor-pointer disabled:cursor-not-allowed disabled:bg-pg-sky-button-disabled"
             disabled={updateButtonDisabled}
@@ -508,33 +508,6 @@
         <button class="w-full pg-sky-button mt-5" type="submit">create property</button>
     {/if}
 </form>
-
-<!-- <table>
-    <thead>
-        <tr>
-            <th>sharing</th>
-            <th>rent</th>
-            <th>perday stay rent</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>1</td>
-            <td>12000</td>
-            <td>500</td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>10000</td>
-            <td>400</td>
-        </tr>
-        <tr>
-            <td>3</td>
-            <td>8000</td>
-            <td>300</td>
-        </tr>
-    </tbody>
-</table> -->
 
 <style>
     :global(div.multiselect) {
